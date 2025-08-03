@@ -1,0 +1,95 @@
+import { Calendar, MapPin, Star, Ticket } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
+interface Event {
+  id: string;
+  name: string;
+  description: string;
+  date: string;
+  city: string;
+  venue: string;
+  isPaid: boolean;
+  price?: string;
+  image?: string;
+  category: string;
+}
+
+interface EventCardProps {
+  event: Event;
+  onViewDetails: (event: Event) => void;
+  onBookTicket?: (event: Event) => void;
+}
+
+export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  return (
+    <div className="group bg-gradient-card rounded-xl p-6 shadow-card hover:shadow-card-hover border border-border/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in">
+      {/* Event Image Placeholder */}
+      <div className="w-full h-48 bg-gradient-sunset rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative z-10 text-white text-center">
+          <Calendar className="w-12 h-12 mx-auto mb-2 opacity-80" />
+          <p className="text-sm font-medium">{event.category}</p>
+        </div>
+      </div>
+
+      {/* Event Details */}
+      <div className="space-y-3">
+        <div className="flex items-start justify-between">
+          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+            {event.name}
+          </h3>
+          <Badge variant={event.isPaid ? "default" : "secondary"}>
+            {event.isPaid ? `₹${event.price}` : "Free"}
+          </Badge>
+        </div>
+
+        <p className="text-muted-foreground text-sm line-clamp-2">
+          {event.description}
+        </p>
+
+        <div className="space-y-2">
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Calendar className="w-4 h-4 mr-2 text-primary" />
+            {formatDate(event.date)}
+          </div>
+          
+          <div className="flex items-center text-sm text-muted-foreground">
+            <MapPin className="w-4 h-4 mr-2 text-secondary" />
+            {event.venue}, {event.city}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 pt-4">
+          <Button 
+            variant="outline" 
+            className="flex-1 hover:bg-accent hover:text-accent-foreground"
+            onClick={() => onViewDetails(event)}
+          >
+            View Details
+          </Button>
+          
+          {event.isPaid && onBookTicket && (
+            <Button 
+              className="flex-1 bg-gradient-primary text-primary-foreground hover:shadow-primary"
+              onClick={() => onBookTicket(event)}
+            >
+              <Ticket className="w-4 h-4 mr-2" />
+              Book Ticket
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

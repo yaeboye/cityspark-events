@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      events: {
+        Row: {
+          address: string | null
+          approved: boolean | null
+          category: string
+          city: string
+          created_at: string
+          description: string | null
+          end_date: string | null
+          external_id: string
+          id: string
+          image_url: string | null
+          is_paid: boolean | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          price_max: number | null
+          price_min: number | null
+          source: string
+          start_date: string
+          ticket_url: string | null
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          address?: string | null
+          approved?: boolean | null
+          category?: string
+          city: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          external_id: string
+          id?: string
+          image_url?: string | null
+          is_paid?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          price_max?: number | null
+          price_min?: number | null
+          source?: string
+          start_date: string
+          ticket_url?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          address?: string | null
+          approved?: boolean | null
+          category?: string
+          city?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          external_id?: string
+          id?: string
+          image_url?: string | null
+          is_paid?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          price_max?: number | null
+          price_min?: number | null
+          source?: string
+          start_date?: string
+          ticket_url?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

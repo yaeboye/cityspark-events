@@ -28,33 +28,21 @@ interface SearchFilters {
   priceType: string;
 }
 
-// Mock events for demo
-const mockEvents: Event[] = [
-  {
-    id: "1",
-    name: "Sunburn Festival Mumbai",
-    description: "India's biggest electronic music festival featuring international and local DJs",
-    date: "2024-01-15",
-    city: "Mumbai",
-    venue: "Mahalaxmi Race Course",
-    isPaid: true,
-    price: "2999",
-    category: "Festival"
-  },
-  {
-    id: "2",
-    name: "Diwali Cultural Night",
-    description: "Celebrate the festival of lights with traditional music, dance, and food",
-    date: "2024-01-20",
-    city: "Delhi",
-    venue: "India Gate Lawns",
-    isPaid: false,
-    category: "Festival"
-  }
-];
+// Transform API events to our format
+const transformApiEvent = (apiEvent: any): Event => ({
+  id: apiEvent.external_id || apiEvent.id,
+  name: apiEvent.name,
+  description: apiEvent.description,
+  date: apiEvent.start_date ? new Date(apiEvent.start_date).toISOString().split('T')[0] : apiEvent.date,
+  city: apiEvent.city,
+  venue: apiEvent.venue || 'Venue TBA',
+  isPaid: apiEvent.is_paid || false,
+  price: apiEvent.price_min ? (apiEvent.price_min / 100).toString() : apiEvent.price,
+  category: apiEvent.category || 'Event'
+});
 
 const Index = () => {
-  const [filteredEvents, setFilteredEvents] = useState(mockEvents);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [showEvents, setShowEvents] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [user, setUser] = useState<any>(null);
@@ -82,19 +70,30 @@ const Index = () => {
   };
 
   const handleSearch = async (filters: SearchFilters) => {
-    // In production, this would call the real API
     if (filters.city) {
       try {
         const { data, error } = await supabase.functions.invoke('fetch-events', {
           body: { city: filters.city, category: filters.category, date: filters.date }
         });
         
-        if (data?.success) {
-          setFilteredEvents(data.events);
+        if (data?.success && data.events) {
+          const transformedEvents = data.events.map(transformApiEvent);
+          setFilteredEvents(transformedEvents);
+          toast({ 
+            title: "Success!", 
+            description: `Found ${transformedEvents.length} events in ${filters.city}` 
+          });
+        } else {
+          throw new Error(data?.error || 'No events found');
         }
       } catch (error) {
-        // Fallback to mock data
-        setFilteredEvents(mockEvents);
+        console.error('Search error:', error);
+        toast({ 
+          title: "Search Error", 
+          description: "Could not fetch events. Please try again.",
+          variant: "destructive" 
+        });
+        setFilteredEvents([]);
       }
     }
     setShowEvents(true);
@@ -155,10 +154,10 @@ const Index = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Find Events Near You
+              Find Your Perfect Weekend Events
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Search through thousands of events happening across India's vibrant cities
+              Discover real events happening across India's cities using our live event search
             </p>
           </div>
           <SearchBar onSearch={handleSearch} />
@@ -170,8 +169,14 @@ const Index = () => {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Trending Events
+                Live Event Results
               </h2>
+              <p className="text-muted-foreground">
+                {filteredEvents.length > 0 
+                  ? `Found ${filteredEvents.length} events` 
+                  : 'Search for events in your city to see results'
+                }
+              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((event) => (

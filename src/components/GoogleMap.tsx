@@ -36,8 +36,8 @@ export const GoogleMap = ({
       }
 
       try {
-        // Get API key from environment or show placeholder
-        const apiKey = "YOUR_GOOGLE_MAPS_API_KEY"; // This will be replaced with actual key
+        // Get API key from environment
+        const apiKey = "AIzaSyCOlDOt1oYzvn7jJvj1_yU2V14mwXdYZGY"; // Using configured API key
         
         const script = document.createElement("script");
         script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;

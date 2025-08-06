@@ -57,7 +57,7 @@ export const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
         </div>
 
         {/* Stats */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 text-white">
           <div className="text-center">
             <div className="text-3xl font-bold text-primary">50K+</div>
             <div className="text-white/80">Events Listed</div>
@@ -65,10 +65,6 @@ export const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
           <div className="text-center">
             <div className="text-3xl font-bold text-secondary">20+</div>
             <div className="text-white/80">Cities Covered</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-accent">1M+</div>
-            <div className="text-white/80">Happy Users</div>
           </div>
         </div>
       </div>

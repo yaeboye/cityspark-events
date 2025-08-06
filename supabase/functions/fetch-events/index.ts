@@ -45,6 +45,10 @@ serve(async (req) => {
       params.append("start_date", date);
     }
 
+    if (!category) {
+      params.append("num", "20");
+    }
+
     console.log(`SerpAPI URL: https://serpapi.com/search?${params}`);
 
     const response = await fetch(`https://serpapi.com/search?${params}`);

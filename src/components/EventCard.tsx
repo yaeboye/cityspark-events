@@ -49,7 +49,7 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
             {event.name}
           </h3>
           <Badge variant={event.isPaid ? "default" : "secondary"}>
-            {event.isPaid ? `₹${event.price}` : "Free"}
+            {event.isPaid ? "Paid" : "Free"}
           </Badge>
         </div>
 

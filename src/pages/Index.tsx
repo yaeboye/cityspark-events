@@ -47,6 +47,7 @@ const Index = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [user, setUser] = useState<any>(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [searchCategory, setSearchCategory] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -70,6 +71,7 @@ const Index = () => {
   };
 
   const handleSearch = async (filters: SearchFilters) => {
+    setSearchCategory(filters.category || "");
     if (filters.city) {
       try {
         const { data, error } = await supabase.functions.invoke('fetch-events', {
@@ -102,6 +104,27 @@ const Index = () => {
   const handleViewDetails = (event: Event) => {
     setSelectedEvent(event);
   };
+
+  // Category derivation and grouping helpers
+  const deriveCategory = (event: Event): string => {
+    const c = (event.category || '').toLowerCase();
+    const text = `${event.name} ${event.description || ''}`.toLowerCase();
+    if (c.includes('concert') || /(concert|music|gig)/.test(text)) return 'concert';
+    if (c.includes('festival') || /(festival|mela|utsav|fair)/.test(text)) return 'festival';
+    if (c.includes('party') || /(party|dj night|club)/.test(text)) return 'party';
+    if (c.includes('comedy') || /(comedy|stand-?up)/.test(text)) return 'comedy';
+    if (c.includes('workshop') || /(workshop|class|training)/.test(text)) return 'workshop';
+    return 'other';
+  };
+
+  const groupsOrder: Array<'festival'|'concert'|'party'|'comedy'|'workshop'|'other'> = ['festival','concert','party','comedy','workshop','other'];
+  const groupedEvents = filteredEvents
+    .slice(0, 20)
+    .reduce((acc: Record<string, Event[]>, ev) => {
+      const key = deriveCategory(ev);
+      (acc[key] ||= []).push(ev);
+      return acc;
+    }, {} as Record<string, Event[]>);
 
   if (selectedEvent) {
     return (
@@ -178,15 +201,38 @@ const Index = () => {
                 }
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredEvents.map((event) => (
-                <EventCard 
-                  key={event.id}
-                  event={event}
-                  onViewDetails={handleViewDetails}
-                />
-              ))}
-            </div>
+            {searchCategory ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredEvents.map((event) => (
+                  <EventCard 
+                    key={event.id}
+                    event={event}
+                    onViewDetails={handleViewDetails}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-10">
+                {groupsOrder.map((group) => (
+                  groupedEvents[group] && groupedEvents[group].length > 0 ? (
+                    <div key={group}>
+                      <h3 className="text-2xl font-semibold text-foreground mb-4 capitalize">
+                        {group} Events
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {groupedEvents[group].map((event) => (
+                          <EventCard 
+                            key={event.id}
+                            event={event}
+                            onViewDetails={handleViewDetails}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ) : null
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

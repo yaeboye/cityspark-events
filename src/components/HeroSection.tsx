@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
-import heroImage from "@/assets/hero-events.jpg";
+import heroFestival from "@/assets/hero-festival.jpg";
 
 interface HeroSectionProps {
   onGetStarted: () => void;
@@ -12,9 +12,9 @@ export const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        style={{ backgroundImage: `url(${heroFestival})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/40"></div>
       </div>
 
       {/* Content */}

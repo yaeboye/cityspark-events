@@ -137,9 +137,18 @@ const Index = () => {
     }, {} as Record<string, Event[]>);
 
   if (selectedEvent) {
+    // Transform event to match EventDetails interface
+    const transformedEvent = {
+      ...selectedEvent,
+      start_date: selectedEvent.date,
+      is_paid: selectedEvent.isPaid,
+      venue: selectedEvent.venue,
+      address: selectedEvent.city
+    };
+    
     return (
       <EventDetails 
-        event={selectedEvent as any}
+        event={transformedEvent as any}
         onBack={() => setSelectedEvent(null)}
         onBookTicket={() => toast({ title: "Booking", description: "Redirecting to payment..." })}
       />

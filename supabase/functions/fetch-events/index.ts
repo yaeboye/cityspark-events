@@ -42,7 +42,11 @@ serve(async (req) => {
     });
 
     if (date) {
-      params.append("start_date", date);
+      // Convert YYYY-MM-DD to a format SerpAPI expects
+      const dateObj = new Date(date);
+      const formattedDate = dateObj.toISOString().split('T')[0]; // Keep YYYY-MM-DD format
+      params.append("start_date", formattedDate);
+      params.append("end_date", formattedDate); // Also set end_date to search for specific day
     }
 
     if (!category) {
@@ -117,8 +121,37 @@ serve(async (req) => {
       };
     });
 
-    // If no events found, provide some fallback events for the city
-    if (events.length === 0) {
+    // If user specified a date, filter events to only show events for that specific date
+    if (date) {
+      const requestedDate = new Date(date);
+      const requestedDateString = requestedDate.toDateString();
+      
+      events = events.filter(event => {
+        const eventDate = new Date(event.start_date);
+        return eventDate.toDateString() === requestedDateString;
+      });
+      
+      // If no events found for the specific date, return appropriate message
+      if (events.length === 0) {
+        const formattedDate = requestedDate.toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        });
+        
+        return new Response(JSON.stringify({ 
+          success: true, 
+          events: [],
+          message: `No events found in ${city} for ${formattedDate}. Try searching for a different date or remove the date filter to see all upcoming events.`,
+          total: 0 
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // If no events found and no specific date, provide fallback events
+    if (events.length === 0 && !date) {
       console.log("No events found from SerpAPI, providing fallback events");
       
       const currentDate = new Date();

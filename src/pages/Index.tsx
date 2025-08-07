@@ -81,10 +81,20 @@ const Index = () => {
         if (data?.success && data.events) {
           const transformedEvents = data.events.map(transformApiEvent);
           setFilteredEvents(transformedEvents);
-          toast({ 
-            title: "Success!", 
-            description: `Found ${transformedEvents.length} events in ${filters.city}` 
-          });
+          
+          if (transformedEvents.length === 0 && data.message) {
+            // Handle case where no events found for specific date
+            toast({ 
+              title: "No Events Found", 
+              description: data.message,
+              variant: "default"
+            });
+          } else {
+            toast({ 
+              title: "Success!", 
+              description: `Found ${transformedEvents.length} events in ${filters.city}` 
+            });
+          }
         } else {
           throw new Error(data?.error || 'No events found');
         }

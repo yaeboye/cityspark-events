@@ -63,28 +63,59 @@ serve(async (req) => {
     }
 
     // Transform SerpApi response to our event format
-    let events = (data.events_results || []).map((event: any) => ({
-      external_id: event.event_id || `serp_${Date.now()}_${Math.random()}`,
-      name: event.title,
-      description: event.description || event.snippet,
-      start_date: event.date?.start_date ? new Date(event.date.start_date).toISOString() : new Date().toISOString(),
-      end_date: event.date?.end_date ? new Date(event.date.end_date).toISOString() : null,
-      city: city,
-      venue: event.venue?.name,
-      address: event.address?.[0] || event.venue?.address,
-      latitude: event.venue?.gps_coordinates?.latitude,
-      longitude: event.venue?.gps_coordinates?.longitude,
-      category: category || "general",
-      is_paid: event.ticket_info?.some((ticket: any) => ticket.price) || false,
-      price_min: event.ticket_info?.length > 0 ? 
-        Math.min(...event.ticket_info.map((t: any) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
-      price_max: event.ticket_info?.length > 0 ? 
-        Math.max(...event.ticket_info.map((t: any) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
-      ticket_url: event.link,
-      image_url: event.thumbnail,
-      source: "api",
-      approved: true,
-    }));
+    let events = (data.events_results || []).map((event: any) => {
+      // Fix date parsing - handle cases where API returns wrong year
+      let startDate = event.date?.start_date;
+      if (startDate) {
+        const parsedDate = new Date(startDate);
+        // If the year is 2001 or any year before 2020, it's likely a parsing error
+        if (parsedDate.getFullYear() < 2020) {
+          // Set to current year with the same month and day
+          const currentYear = new Date().getFullYear();
+          parsedDate.setFullYear(currentYear);
+          startDate = parsedDate.toISOString();
+        } else {
+          startDate = parsedDate.toISOString();
+        }
+      } else {
+        startDate = new Date().toISOString();
+      }
+
+      let endDate = event.date?.end_date;
+      if (endDate) {
+        const parsedEndDate = new Date(endDate);
+        if (parsedEndDate.getFullYear() < 2020) {
+          const currentYear = new Date().getFullYear();
+          parsedEndDate.setFullYear(currentYear);
+          endDate = parsedEndDate.toISOString();
+        } else {
+          endDate = parsedEndDate.toISOString();
+        }
+      }
+
+      return {
+        external_id: event.event_id || `serp_${Date.now()}_${Math.random()}`,
+        name: event.title,
+        description: event.description || event.snippet,
+        start_date: startDate,
+        end_date: endDate,
+        city: city,
+        venue: event.venue?.name,
+        address: event.address?.[0] || event.venue?.address,
+        latitude: event.venue?.gps_coordinates?.latitude,
+        longitude: event.venue?.gps_coordinates?.longitude,
+        category: category || "general",
+        is_paid: event.ticket_info?.some((ticket: any) => ticket.price) || false,
+        price_min: event.ticket_info?.length > 0 ? 
+          Math.min(...event.ticket_info.map((t: any) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
+        price_max: event.ticket_info?.length > 0 ? 
+          Math.max(...event.ticket_info.map((t: any) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
+        ticket_url: event.link,
+        image_url: event.thumbnail,
+        source: "api",
+        approved: true,
+      };
+    });
 
     // If no events found, provide some fallback events for the city
     if (events.length === 0) {

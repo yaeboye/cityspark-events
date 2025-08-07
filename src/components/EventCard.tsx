@@ -23,7 +23,20 @@ interface EventCardProps {
 
 export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps) => {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // Handle different date formats and ensure proper parsing
+    let date: Date;
+    
+    if (dateString.includes('T')) {
+      // ISO format with time
+      date = new Date(dateString);
+    } else if (dateString.includes('-')) {
+      // YYYY-MM-DD format - explicitly parse to avoid timezone issues
+      const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
+      date = new Date(year, month - 1, day); // month is 0-indexed
+    } else {
+      date = new Date(dateString);
+    }
+    
     return date.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',

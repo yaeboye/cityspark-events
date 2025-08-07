@@ -23,6 +23,8 @@ interface EventCardProps {
 
 export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps) => {
   const formatDate = (dateString: string) => {
+    console.log('Raw date string:', dateString);
+    
     // Handle different date formats and ensure proper parsing
     let date: Date;
     
@@ -31,11 +33,24 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
       date = new Date(dateString);
     } else if (dateString.includes('-')) {
       // YYYY-MM-DD format - explicitly parse to avoid timezone issues
-      const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
-      date = new Date(year, month - 1, day); // month is 0-indexed
+      const parts = dateString.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parseInt(parts[2], 10);
+      
+      // Validate year range to catch incorrect parsing
+      if (year < 2000 || year > 2030) {
+        console.error('Invalid year detected:', year, 'from date string:', dateString);
+        // Try parsing as a different format or default to current year
+        date = new Date();
+      } else {
+        date = new Date(year, month - 1, day); // month is 0-indexed
+      }
     } else {
       date = new Date(dateString);
     }
+    
+    console.log('Parsed date:', date);
     
     return date.toLocaleDateString('en-IN', {
       day: '2-digit',

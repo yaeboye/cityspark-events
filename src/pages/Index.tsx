@@ -33,7 +33,7 @@ const transformApiEvent = (apiEvent: any): Event => ({
   id: apiEvent.external_id || apiEvent.id,
   name: apiEvent.name,
   description: apiEvent.description,
-  date: apiEvent.start_date ? new Date(apiEvent.start_date).toISOString().split('T')[0] : apiEvent.date,
+  date: apiEvent.start_date || apiEvent.date,
   city: apiEvent.city,
   venue: apiEvent.venue || 'Venue TBA',
   isPaid: apiEvent.is_paid || false,

@@ -7,7 +7,10 @@ import { AuthForms } from "@/components/auth/AuthForms";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { User, LogOut } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { User, LogOut, Music2, PartyPopper, Mic2, Briefcase, Sparkles, MapPin, Star } from "lucide-react";
 
 interface Event {
   id: string;
@@ -203,6 +206,83 @@ const Index = () => {
             </p>
           </div>
           <SearchBar onSearch={handleSearch} />
+
+          {/* Popular Categories */}
+          <section aria-labelledby="popular-categories" className="mt-12">
+            <h3 id="popular-categories" className="text-xl font-semibold text-foreground mb-4">
+              Popular Categories
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    <span className="font-medium">Festivals</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">City fairs, melas and cultural vibes</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3">
+                    <Music2 className="w-5 h-5 text-primary" />
+                    <span className="font-medium">Concerts</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Live music, indie gigs and more</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3">
+                    <PartyPopper className="w-5 h-5 text-primary" />
+                    <span className="font-medium">Parties</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">DJ nights and club events</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3">
+                    <Mic2 className="w-5 h-5 text-primary" />
+                    <span className="font-medium">Comedy</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Stand-up and open mics</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3">
+                    <Briefcase className="w-5 h-5 text-primary" />
+                    <span className="font-medium">Workshops</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Learn and build new skills</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3">
+                    <Star className="w-5 h-5 text-primary" />
+                    <span className="font-medium">Other</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Everything in between</p>
+                </CardContent>
+              </Card>
+            </div>
+          </section>
+
+          {/* Featured Cities */}
+          <section aria-labelledby="featured-cities" className="mt-12">
+            <h3 id="featured-cities" className="text-xl font-semibold text-foreground mb-4">
+              Featured Cities
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {['Mumbai','Delhi','Bengaluru','Hyderabad','Chennai','Kolkata','Pune','Goa'].map((city) => (
+                <Button key={city} variant="secondary" size="sm" className="hover-scale">
+                  <MapPin className="w-4 h-4 mr-1" /> {city}
+                </Button>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
 

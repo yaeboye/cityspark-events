@@ -236,10 +236,21 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                   size="lg"
                   variant="outline"
                   className="flex-1"
-                  onClick={() => {
-                    if (event.latitude && event.longitude) {
-                      const url = `https://www.google.com/maps/dir/?api=1&destination=${event.latitude},${event.longitude}`;
-                      window.open(url, '_blank');
+onClick={() => {
+                    const hasCoords = typeof event.latitude === "number" && typeof event.longitude === "number";
+                    const destination = hasCoords
+                      ? `${event.latitude},${event.longitude}`
+                      : encodeURIComponent(
+                          [event.venue, event.address, event.city].filter(Boolean).join(", ")
+                        );
+                    if (destination) {
+                      const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+                      window.open(url, "_blank", "noopener,noreferrer");
+                    } else {
+                      toast({
+                        title: "Location unavailable",
+                        description: "No address or coordinates found for this event.",
+                      });
                     }
                   }}
                 >

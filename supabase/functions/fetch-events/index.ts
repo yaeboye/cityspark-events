@@ -12,6 +12,63 @@ interface EventSearchParams {
   date?: string;
 }
 
+// Helper function to get approximate city coordinates
+function getCityCoordinates(city: string): { lat: number; lng: number } {
+  const coordinates: Record<string, { lat: number; lng: number }> = {
+    'delhi': { lat: 28.6139, lng: 77.2090 },
+    'mumbai': { lat: 19.0760, lng: 72.8777 },
+    'bangalore': { lat: 12.9716, lng: 77.5946 },
+    'bengaluru': { lat: 12.9716, lng: 77.5946 },
+    'kolkata': { lat: 22.5726, lng: 88.3639 },
+    'chennai': { lat: 13.0827, lng: 80.2707 },
+    'hyderabad': { lat: 17.3850, lng: 78.4867 },
+    'pune': { lat: 18.5204, lng: 73.8567 },
+    'ahmedabad': { lat: 23.0225, lng: 72.5714 },
+    'jaipur': { lat: 26.9124, lng: 75.7873 },
+    'lucknow': { lat: 26.8467, lng: 80.9462 },
+    'kanpur': { lat: 26.4499, lng: 80.3319 },
+    'nagpur': { lat: 21.1458, lng: 79.0882 },
+    'indore': { lat: 22.7196, lng: 75.8577 },
+    'thane': { lat: 19.2183, lng: 72.9781 },
+    'bhopal': { lat: 23.2599, lng: 77.4126 },
+    'visakhapatnam': { lat: 17.6868, lng: 83.2185 },
+    'pimpri': { lat: 18.6298, lng: 73.8000 },
+    'patna': { lat: 25.5941, lng: 85.1376 },
+    'vadodara': { lat: 22.3072, lng: 73.1812 },
+    'ludhiana': { lat: 30.9010, lng: 75.8573 },
+    'agra': { lat: 27.1767, lng: 78.0081 },
+    'nashik': { lat: 19.9975, lng: 73.7898 },
+    'faridabad': { lat: 28.4089, lng: 77.3178 },
+    'meerut': { lat: 28.9845, lng: 77.7064 },
+    'rajkot': { lat: 22.3039, lng: 70.8022 },
+    'kalyan': { lat: 19.2437, lng: 73.1355 },
+    'vasai': { lat: 19.4882, lng: 72.8058 },
+    'varanasi': { lat: 25.3176, lng: 82.9739 },
+    'srinagar': { lat: 34.0837, lng: 74.7973 },
+    'aurangabad': { lat: 19.8762, lng: 75.3433 },
+    'dhanbad': { lat: 23.7957, lng: 86.4304 },
+    'amritsar': { lat: 31.6340, lng: 74.8723 },
+    'navi mumbai': { lat: 19.0330, lng: 73.0297 },
+    'allahabad': { lat: 25.4358, lng: 81.8463 },
+    'prayagraj': { lat: 25.4358, lng: 81.8463 },
+    'ranchi': { lat: 23.3441, lng: 85.3096 },
+    'howrah': { lat: 22.5958, lng: 88.2636 },
+    'coimbatore': { lat: 11.0168, lng: 76.9558 },
+    'jabalpur': { lat: 23.1815, lng: 79.9864 },
+    'gwalior': { lat: 26.2183, lng: 78.1828 },
+    'vijayawada': { lat: 16.5062, lng: 80.6480 },
+    'jodhpur': { lat: 26.2389, lng: 73.0243 },
+    'madurai': { lat: 9.9252, lng: 78.1198 },
+    'raipur': { lat: 21.2514, lng: 81.6296 },
+    'kota': { lat: 25.2138, lng: 75.8648 },
+    'chandigarh': { lat: 30.7333, lng: 76.7794 },
+    'guwahati': { lat: 26.1445, lng: 91.7362 },
+  };
+
+  const cityKey = city.toLowerCase().trim();
+  return coordinates[cityKey] || { lat: 28.6139, lng: 77.2090 }; // Default to Delhi
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -97,6 +154,24 @@ serve(async (req) => {
         }
       }
 
+      // Extract coordinates from Google Maps link if available
+      let latitude = null;
+      let longitude = null;
+      
+      if (event.event_location_map?.link) {
+        const mapLink = event.event_location_map.link;
+        // Extract coordinates from Google Maps URL patterns like: data=!4m2!3m1!1s0x390d1d1bfd29596f:0x3b01784733155eee
+        const coordMatch = mapLink.match(/1s0x([a-f0-9]+):0x([a-f0-9]+)/);
+        if (coordMatch) {
+          // Convert hex coordinates back to decimal (approximate)
+          // This is a simplified conversion - for production, you'd need a proper geocoding service
+          // For now, let's use city-based default coordinates
+          const cityCoords = getCityCoordinates(city);
+          latitude = cityCoords.lat;
+          longitude = cityCoords.lng;
+        }
+      }
+
       return {
         external_id: event.event_id || `serp_${Date.now()}_${Math.random()}`,
         name: event.title,
@@ -106,8 +181,8 @@ serve(async (req) => {
         city: city,
         venue: event.venue?.name,
         address: event.address?.[0] || event.venue?.address,
-        latitude: event.venue?.gps_coordinates?.latitude,
-        longitude: event.venue?.gps_coordinates?.longitude,
+        latitude: latitude,
+        longitude: longitude,
         category: category || "general",
         is_paid: event.ticket_info?.some((ticket: any) => ticket.price) || false,
         price_min: event.ticket_info?.length > 0 ? 

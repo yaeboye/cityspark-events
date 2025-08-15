@@ -33,7 +33,7 @@ interface SearchFilters {
 
 // Transform API events to our format
 const transformApiEvent = (apiEvent: any): Event => ({
-  id: apiEvent.external_id || apiEvent.id,
+  id: apiEvent.id || apiEvent.external_id, // Use database UUID if available, fallback to external_id
   name: apiEvent.name,
   description: apiEvent.description,
   date: apiEvent.start_date || apiEvent.date,

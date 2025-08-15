@@ -74,6 +74,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Initialize Supabase client
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+
   try {
     const { city, category, date }: EventSearchParams = await req.json();
     
@@ -277,12 +282,50 @@ serve(async (req) => {
       ];
     }
 
-    console.log(`Returning ${events.length} events for ${city}`);
+    // Store events in database and get UUIDs
+    const eventsToStore = events.map(event => ({
+      external_id: event.external_id,
+      name: event.name,
+      description: event.description,
+      start_date: event.start_date,
+      end_date: event.end_date,
+      city: event.city,
+      venue: event.venue,
+      address: event.address,
+      latitude: event.latitude,
+      longitude: event.longitude,
+      category: event.category,
+      is_paid: event.is_paid,
+      price_min: event.price_min,
+      price_max: event.price_max,
+      ticket_url: event.ticket_url,
+      image_url: event.image_url,
+      source: event.source,
+      approved: event.approved
+    }));
+
+    // Use upsert to avoid duplicates and get the stored events with UUIDs
+    const { data: storedEvents, error: storeError } = await supabaseClient
+      .from('events')
+      .upsert(eventsToStore, { 
+        onConflict: 'external_id',
+        ignoreDuplicates: false 
+      })
+      .select();
+
+    if (storeError) {
+      console.error('Error storing events:', storeError);
+      // Still return the events even if storage fails
+    }
+
+    const finalEvents = storedEvents || events;
+
+    console.log(`Returning ${finalEvents.length} events for ${city}`);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      events: events,
-      total: events.length 
+      events: finalEvents,
+      total: finalEvents.length 
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -89,14 +89,11 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
           </div>
 
           {/* Weather Information */}
-          {event.latitude && event.longitude && (
-            <EventWeatherCard
-              latitude={event.latitude}
-              longitude={event.longitude}
-              eventDate={event.date}
-              className="pt-1"
-            />
-          )}
+          <EventWeatherCard
+            city={event.city}
+            eventDate={event.date}
+            className="pt-1"
+          />
         </div>
 
         {/* Action Buttons */}

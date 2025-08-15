@@ -12,15 +12,13 @@ interface WeatherData {
 }
 
 interface EventWeatherCardProps {
-  latitude?: number;
-  longitude?: number;
+  city: string;
   eventDate: string;
   className?: string;
 }
 
 export const EventWeatherCard = ({ 
-  latitude, 
-  longitude, 
+  city, 
   eventDate, 
   className = "" 
 }: EventWeatherCardProps) => {
@@ -29,7 +27,7 @@ export const EventWeatherCard = ({
 
   useEffect(() => {
     const fetchWeather = async () => {
-      if (!latitude || !longitude) {
+      if (!city) {
         setLoading(false);
         return;
       }
@@ -37,8 +35,7 @@ export const EventWeatherCard = ({
       try {
         const { data, error } = await supabase.functions.invoke('get-weather', {
           body: {
-            latitude,
-            longitude,
+            city,
             date: eventDate,
           }
         });
@@ -56,7 +53,7 @@ export const EventWeatherCard = ({
     };
 
     fetchWeather();
-  }, [latitude, longitude, eventDate]);
+  }, [city, eventDate]);
 
   const getWeatherIcon = (iconCode: string) => {
     switch (iconCode?.charAt(0)) {

@@ -36,27 +36,9 @@ export const GoogleMap = ({
       }
 
       try {
-        // Get API key from environment
-        const apiKey = "AIzaSyCOlDOt1oYzvn7jJvj1_yU2V14mwXdYZGY"; // Using configured API key
-        
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-        script.async = true;
-        
-        script.onload = () => {
-          setIsLoaded(true);
-          initializeMap();
-        };
-        
-        script.onerror = () => {
-          toast({
-            title: "Map loading failed",
-            description: "Unable to load Google Maps. Please check your connection.",
-            variant: "destructive",
-          });
-        };
-        
-        document.head.appendChild(script);
+        // For now, we'll show a fallback map until API key is properly configured
+        showFallbackMap();
+        return;
       } catch (error) {
         console.error("Error loading Google Maps:", error);
         toast({
@@ -65,6 +47,43 @@ export const GoogleMap = ({
           variant: "destructive",
         });
       }
+    };
+
+    const showFallbackMap = () => {
+      if (!mapRef.current) return;
+      
+      const fallbackContent = `
+        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px; padding: 20px; text-align: center;">
+          <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 300px;">
+            <h3 style="margin: 0 0 10px 0; color: #333; font-size: 18px;">${venue || "Event Location"}</h3>
+            ${address ? `<p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">${address}</p>` : ""}
+            <p style="margin: 0 0 15px 0; color: #888; font-size: 12px;">Coordinates: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}</p>
+            <a 
+              href="https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style="
+                display: inline-block;
+                background: #1976d2; 
+                color: white; 
+                text-decoration: none; 
+                padding: 10px 20px; 
+                border-radius: 6px; 
+                font-size: 14px;
+                font-weight: 500;
+                transition: background-color 0.2s;
+              "
+              onmouseover="this.style.backgroundColor='#1565c0'"
+              onmouseout="this.style.backgroundColor='#1976d2'"
+            >
+              🗺️ Get Directions
+            </a>
+          </div>
+        </div>
+      `;
+      
+      mapRef.current.innerHTML = fallbackContent;
+      setIsLoaded(true);
     };
 
     const initializeMap = () => {

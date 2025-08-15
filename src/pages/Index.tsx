@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { HeroSection } from "@/components/HeroSection";
 import { SearchBar } from "@/components/SearchBar";
 import { EventCard } from "@/components/EventCard";
-import { EventDetails } from "@/components/EventDetails";
+import { EventModal } from "@/components/EventModal";
 import { AuthForms } from "@/components/auth/AuthForms";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,6 +48,7 @@ const Index = () => {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [showEvents, setShowEvents] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [showEventModal, setShowEventModal] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [searchCategory, setSearchCategory] = useState<string>("");
@@ -116,6 +117,7 @@ const Index = () => {
 
   const handleViewDetails = (event: Event) => {
     setSelectedEvent(event);
+    setShowEventModal(true);
   };
 
   // Category derivation and grouping helpers
@@ -139,24 +141,6 @@ const Index = () => {
       return acc;
     }, {} as Record<string, Event[]>);
 
-  if (selectedEvent) {
-    // Transform event to match EventDetails interface
-    const transformedEvent = {
-      ...selectedEvent,
-      start_date: selectedEvent.date,
-      is_paid: selectedEvent.isPaid,
-      venue: selectedEvent.venue,
-      address: selectedEvent.city
-    };
-    
-    return (
-      <EventDetails 
-        event={transformedEvent as any}
-        onBack={() => setSelectedEvent(null)}
-        onBookTicket={() => toast({ title: "Booking", description: "Redirecting to payment..." })}
-      />
-    );
-  }
 
   if (showAuth) {
     return (
@@ -342,6 +326,17 @@ const Index = () => {
           </div>
         </div>
       )}
+
+      {/* Event Modal */}
+      <EventModal
+        event={selectedEvent}
+        isOpen={showEventModal}
+        onClose={() => {
+          setShowEventModal(false);
+          setSelectedEvent(null);
+        }}
+        onBookTicket={() => toast({ title: "Booking", description: "Redirecting to payment..." })}
+      />
     </div>
   );
 };

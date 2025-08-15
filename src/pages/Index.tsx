@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import { User, LogOut, Music2, PartyPopper, Mic2, Briefcase, Sparkles, MapPin, Star } from "lucide-react";
+import { User, LogOut, Music2, PartyPopper, Mic2, Briefcase, Sparkles, MapPin, Star, Bookmark } from "lucide-react";
 
 interface Event {
   id: string;
@@ -173,6 +173,13 @@ const Index = () => {
         {user ? (
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.location.href = '/bookmarks'}
+            >
+              <Bookmark className="w-4 h-4" />
+            </Button>
             <Button 
               variant="outline" 
               size="sm"

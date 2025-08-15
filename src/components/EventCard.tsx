@@ -1,7 +1,8 @@
-import { Calendar, MapPin, Star, Ticket } from "lucide-react";
+import { Calendar, MapPin, Star, Ticket, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EventWeatherCard } from "@/components/EventWeatherCard";
+import { useBookmarks } from "@/hooks/useBookmarks";
 
 interface Event {
   id: string;
@@ -25,6 +26,8 @@ interface EventCardProps {
 }
 
 export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps) => {
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  
   const formatDate = (dateString: string) => {
     // Handle different date formats and ensure proper parsing
     let date: Date;
@@ -65,12 +68,24 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
       {/* Event Details */}
       <div className="space-y-3">
         <div className="flex items-start justify-between">
-          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 flex-1 pr-2">
             {event.name}
           </h3>
-          <Badge variant={event.isPaid ? "default" : "secondary"}>
-            {event.isPaid ? "Paid" : "Free"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => toggleBookmark(event.id)}
+              className="h-8 w-8 p-0 hover:bg-accent"
+            >
+              <Bookmark 
+                className={`w-4 h-4 ${isBookmarked(event.id) ? 'fill-primary text-primary' : 'text-muted-foreground'}`}
+              />
+            </Button>
+            <Badge variant={event.isPaid ? "default" : "secondary"}>
+              {event.isPaid ? "Paid" : "Free"}
+            </Badge>
+          </div>
         </div>
 
         <p className="text-muted-foreground text-sm line-clamp-2">

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Calendar, MapPin, Clock, Users, Ticket, Heart, Share2, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, Ticket, Bookmark, Share2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { WeatherWidget } from "@/components/WeatherWidget";
 import { GoogleMap } from "@/components/GoogleMap";
 import { useToast } from "@/hooks/use-toast";
+import { useBookmarks } from "@/hooks/useBookmarks";
 
 interface Event {
   id: string;
@@ -33,7 +34,7 @@ interface EventDetailsProps {
 }
 
 export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { isBookmarked, toggleBookmark } = useBookmarks();
   const { toast } = useToast();
 
   const formatDate = (dateString: string) => {
@@ -62,15 +63,6 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
     return `Up to ₹${(max! / 100).toFixed(0)}`;
   };
 
-  const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    toast({
-      title: isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: isFavorite 
-        ? `${event.name} removed from your favorites`
-        : `${event.name} added to your favorites`,
-    });
-  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -116,11 +108,11 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleFavorite}
-                className={isFavorite ? "text-red-500 border-red-200" : ""}
+                onClick={() => toggleBookmark(event.id)}
+                className={isBookmarked(event.id) ? "text-primary border-primary/50" : ""}
               >
-                <Heart className={`w-4 h-4 mr-1 ${isFavorite ? "fill-current" : ""}`} />
-                {isFavorite ? "Favorited" : "Favorite"}
+                <Bookmark className={`w-4 h-4 mr-1 ${isBookmarked(event.id) ? "fill-current" : ""}`} />
+                {isBookmarked(event.id) ? "Bookmarked" : "Bookmark"}
               </Button>
               
               <Button

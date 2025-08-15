@@ -1,6 +1,7 @@
 import { Calendar, MapPin, Star, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { EventWeatherCard } from "@/components/EventWeatherCard";
 
 interface Event {
   id: string;
@@ -13,6 +14,8 @@ interface Event {
   price?: string;
   image?: string;
   category: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 interface EventCardProps {
@@ -84,6 +87,16 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
             <MapPin className="w-4 h-4 mr-2 text-secondary" />
             {event.venue}, {event.city}
           </div>
+
+          {/* Weather Information */}
+          {event.latitude && event.longitude && (
+            <EventWeatherCard
+              latitude={event.latitude}
+              longitude={event.longitude}
+              eventDate={event.date}
+              className="pt-1"
+            />
+          )}
         </div>
 
         {/* Action Buttons */}

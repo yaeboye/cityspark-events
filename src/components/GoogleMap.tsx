@@ -59,7 +59,7 @@ export const GoogleMap = ({
             ${address ? `<p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">${address}</p>` : ""}
             <p style="margin: 0 0 15px 0; color: #888; font-size: 12px;">Coordinates: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}</p>
             <a 
-              href="https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}" 
+              href="https://www.google.com/maps?q=${latitude},${longitude}" 
               target="_blank" 
               rel="noopener noreferrer"
               style="
@@ -120,7 +120,7 @@ export const GoogleMap = ({
             ${address ? `<p style="margin: 0; color: #666; font-size: 14px;">${address}</p>` : ""}
             <div style="margin-top: 10px;">
               <a 
-                href="https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}" 
+                href="https://www.google.com/maps?q=${latitude},${longitude}" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style="color: #1976d2; text-decoration: none; font-size: 14px;"

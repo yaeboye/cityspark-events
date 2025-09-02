@@ -59,7 +59,7 @@ export const GoogleMap = ({
             ${address ? `<p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">${address}</p>` : ""}
             <p style="margin: 0 0 15px 0; color: #888; font-size: 12px;">Coordinates: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}</p>
             <a 
-              href="https://www.google.com/maps?q=${latitude},${longitude}" 
+              href="https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}" 
               target="_blank" 
               rel="noopener noreferrer"
               style="
@@ -76,7 +76,27 @@ export const GoogleMap = ({
               onmouseover="this.style.backgroundColor='#1565c0'"
               onmouseout="this.style.backgroundColor='#1976d2'"
             >
-              🗺️ Get Directions
+              🗺️ View on Map
+            </a>
+            <br />
+            <a 
+              href="geo:${latitude},${longitude}" 
+              style="
+                display: inline-block;
+                background: #28a745; 
+                color: white; 
+                text-decoration: none; 
+                padding: 8px 16px; 
+                border-radius: 6px; 
+                font-size: 12px;
+                font-weight: 500;
+                margin-top: 8px;
+                transition: background-color 0.2s;
+              "
+              onmouseover="this.style.backgroundColor='#218838'"
+              onmouseout="this.style.backgroundColor='#28a745'"
+            >
+              📱 Open in Maps App
             </a>
           </div>
         </div>
@@ -120,12 +140,12 @@ export const GoogleMap = ({
             ${address ? `<p style="margin: 0; color: #666; font-size: 14px;">${address}</p>` : ""}
             <div style="margin-top: 10px;">
               <a 
-                href="https://www.google.com/maps?q=${latitude},${longitude}" 
+                href="https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=15/${latitude}/${longitude}" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style="color: #1976d2; text-decoration: none; font-size: 14px;"
               >
-                Get Directions →
+                View on Map →
               </a>
             </div>
           </div>

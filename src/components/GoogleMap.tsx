@@ -1,7 +1,18 @@
-import { MapPin, Navigation, Copy } from "lucide-react";
+import React, { useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { MapPin, Navigation, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+
+// Fix for default markers
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 interface GoogleMapProps {
   latitude: number;
@@ -18,50 +29,93 @@ export const GoogleMap = ({
   address 
 }: GoogleMapProps) => {
   const { toast } = useToast();
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
   
-  const copyCoordinates = () => {
-    const coordinates = `${latitude}, ${longitude}`;
-    navigator.clipboard.writeText(coordinates).then(() => {
-      toast({
-        title: "Coordinates copied",
-        description: "Location coordinates copied to clipboard",
-      });
-    });
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return;
+
+    // Initialize the map
+    const map = L.map(mapRef.current).setView([latitude, longitude], 15);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Add marker for the event location
+    const marker = L.marker([latitude, longitude]).addTo(map);
+    
+    if (venue || address) {
+      marker.bindPopup(`
+        <div class="text-center">
+          <h3 class="font-semibold">${venue || 'Event Location'}</h3>
+          ${address ? `<p class="text-sm text-gray-600">${address}</p>` : ''}
+        </div>
+      `);
+    }
+
+    mapInstanceRef.current = map;
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [latitude, longitude, venue, address]);
+
+  const openInMaps = () => {
+    const destination = `${latitude},${longitude}`;
+    const urls = [
+      `https://maps.google.com/maps?q=${destination}`,
+      `https://maps.apple.com/?q=${destination}`,
+      `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=15`
+    ];
+    
+    // Try to open Google Maps, fallback to others if needed
+    window.open(urls[0], '_blank');
   };
 
   return (
     <div className="w-full h-full relative">
-      <Card className="w-full h-full min-h-[300px] flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center">
-            <MapPin className="w-8 h-8 text-primary-foreground" />
-          </div>
+      <Card className="w-full h-full min-h-[400px] overflow-hidden">
+        <div className="relative w-full h-full">
+          <div ref={mapRef} className="w-full h-full min-h-[400px]" />
           
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-foreground">
-              {venue || "Event Location"}
-            </h3>
-            {address && (
-              <p className="text-sm text-muted-foreground">{address}</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Coordinates: {latitude.toFixed(4)}, {longitude.toFixed(4)}
-            </p>
+          {/* Map controls overlay */}
+          <div className="absolute top-4 right-4 flex flex-col gap-2">
+            <Button 
+              onClick={openInMaps}
+              size="sm"
+              variant="secondary"
+              className="flex items-center gap-2 shadow-lg"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Open in Maps
+            </Button>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-6">
-            <Button 
-              onClick={copyCoordinates}
-              variant="default"
-              className="flex items-center gap-2"
-            >
-              <Copy className="w-4 h-4" />
-              Copy Coordinates
-            </Button>
-            
-            <div className="text-xs text-muted-foreground mt-2">
-              Use these coordinates in your preferred maps app
-            </div>
+          {/* Location info overlay */}
+          <div className="absolute bottom-4 left-4 right-4">
+            <Card className="p-3 bg-background/95 backdrop-blur-sm">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <MapPin className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm">
+                    {venue || "Event Location"}
+                  </h3>
+                  {address && (
+                    <p className="text-xs text-muted-foreground">{address}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    {latitude.toFixed(4)}, {longitude.toFixed(4)}
+                  </p>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </Card>

@@ -1,6 +1,7 @@
-import { MapPin, Navigation } from "lucide-react";
+import { MapPin, Navigation, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 interface GoogleMapProps {
   latitude: number;
@@ -16,23 +17,16 @@ export const GoogleMap = ({
   venue, 
   address 
 }: GoogleMapProps) => {
+  const { toast } = useToast();
   
-  const handleOpenInMaps = () => {
-    // Try different map applications in order of preference
-    const urls = [
-      `geo:${latitude},${longitude}`, // Native maps app
-      `https://maps.apple.com/?q=${latitude},${longitude}`, // Apple Maps
-      `https://www.bing.com/maps?q=${latitude},${longitude}`, // Bing Maps
-    ];
-    
-    // Try to open the first available option
-    window.open(urls[1], '_blank');
-  };
-
-  const handleGetDirections = () => {
-    // Use universal geo protocol for directions
-    const geoUrl = `geo:${latitude},${longitude}?q=${latitude},${longitude}`;
-    window.location.href = geoUrl;
+  const copyCoordinates = () => {
+    const coordinates = `${latitude}, ${longitude}`;
+    navigator.clipboard.writeText(coordinates).then(() => {
+      toast({
+        title: "Coordinates copied",
+        description: "Location coordinates copied to clipboard",
+      });
+    });
   };
 
   return (
@@ -57,22 +51,17 @@ export const GoogleMap = ({
 
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
             <Button 
-              onClick={handleOpenInMaps}
+              onClick={copyCoordinates}
               variant="default"
               className="flex items-center gap-2"
             >
-              <MapPin className="w-4 h-4" />
-              View Location
+              <Copy className="w-4 h-4" />
+              Copy Coordinates
             </Button>
             
-            <Button 
-              onClick={handleGetDirections}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Navigation className="w-4 h-4" />
-              Get Directions
-            </Button>
+            <div className="text-xs text-muted-foreground mt-2">
+              Use these coordinates in your preferred maps app
+            </div>
           </div>
         </div>
       </Card>

@@ -8,66 +8,57 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ onGetStarted }: HeroSectionProps) => {
   return (
-    <div className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroFestival})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/40"></div>
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 mb-6 text-white/90 text-sm">
-          <Sparkles className="w-4 h-4 text-primary" />
-          Live Event Search Across India
-        </div>
-
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          <span className="bg-gradient-sunset bg-clip-text text-transparent">
-            Weekend Walla
-          </span>
-          <span className="block text-4xl md:text-6xl mt-2">
-            Find Your Perfect Weekend
-          </span>
-        </h1>
-
-        <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-          Discover real events, festivals, and activities happening across India's vibrant cities every weekend
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button 
-            size="lg" 
-            className="bg-gradient-primary text-primary-foreground hover:shadow-primary text-lg px-8 py-6 group"
-            onClick={onGetStarted}
-          >
-            Explore Events
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
+    <section className="bg-gradient-hero text-white py-20 md:py-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="md:flex md:items-center md:justify-between">
+          <div className="md:w-1/2 mb-10 md:mb-0">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 text-white/90 text-sm">
+              <Sparkles className="w-4 h-4 text-white" />
+              Live Event Search Across India
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
+              We help you discover events that matter
+            </h1>
+            
+            <p className="text-xl text-white/90 mb-8">
+              Weekend Walla is your gateway to amazing events, festivals, and activities happening across India's vibrant cities.
+            </p>
+            
+            <div className="flex space-x-4">
+              <Button 
+                size="lg"
+                onClick={onGetStarted}
+                className="bg-white text-primary hover:bg-gray-100 px-6 py-3 font-medium transition-all duration-200 hover:shadow-lg group"
+              >
+                Get Started
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border border-white text-white hover:bg-white hover:bg-opacity-10 px-6 py-3 font-medium transition-all duration-200 hover:shadow-lg"
+              >
+                Learn More
+              </Button>
+            </div>
+          </div>
           
-          <Button 
-            size="lg" 
-            variant="outline" 
-            className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 text-lg px-8 py-6"
-          >
-            How It Works
-          </Button>
-        </div>
-
-        {/* Stats */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 text-white">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary">50K+</div>
-            <div className="text-white/80">Events Listed</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-secondary">20+</div>
-            <div className="text-white/80">Cities Covered</div>
+          <div className="md:w-1/2 flex justify-center">
+            <div className="relative w-full max-w-md">
+              <div className="absolute -top-6 -left-6 w-32 h-32 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+              <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
+              <div className="relative bg-white rounded-lg shadow-xl p-6">
+                <img 
+                  src={heroFestival} 
+                  alt="Event discovery" 
+                  className="rounded-lg w-full h-64 object-cover"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

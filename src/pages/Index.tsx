@@ -4,13 +4,17 @@ import { SearchBar } from "@/components/SearchBar";
 import { EventCard } from "@/components/EventCard";
 import { EventModal } from "@/components/EventModal";
 import { AuthForms } from "@/components/auth/AuthForms";
+import { NavigationHeader } from "@/components/NavigationHeader";
+import { FeaturesSection } from "@/components/FeaturesSection";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { StatsSection } from "@/components/StatsSection";
+import { CallToActionSection } from "@/components/CallToActionSection";
+import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Input } from "@/components/ui/input";
-import { User, LogOut, Music2, PartyPopper, Mic2, Briefcase, Sparkles, MapPin, Star, Bookmark } from "lucide-react";
+import { Music2, PartyPopper, Mic2, Briefcase, Sparkles, MapPin, Star } from "lucide-react";
 
 interface Event {
   id: string;
@@ -151,140 +155,124 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="absolute top-4 right-4 z-10">
-        {user ? (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => window.location.href = '/bookmarks'}
-            >
-              <Bookmark className="w-4 h-4" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => supabase.auth.signOut()}
-            >
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-        ) : (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setShowAuth(true)}
-          >
-            <User className="w-4 h-4 mr-2" />
-            Login
-          </Button>
-        )}
-      </div>
+    <div className="min-h-screen bg-background antialiased">
+      {/* Navigation */}
+      <NavigationHeader user={user} onShowAuth={() => setShowAuth(true)} />
 
+      {/* Hero Section */}
       <HeroSection onGetStarted={handleGetStarted} />
 
-      <div className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+      {/* Search Section */}
+      <section className="py-20 bg-white/95">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Find Your Perfect Weekend Events
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Discover real events happening across India's cities using our live event search
             </p>
           </div>
           <SearchBar onSearch={handleSearch} />
-
-          {/* Popular Categories */}
-          <section aria-labelledby="popular-categories" className="mt-12">
-            <h3 id="popular-categories" className="text-xl font-semibold text-foreground mb-4">
-              Popular Categories
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-3">
-                    <Sparkles className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Festivals</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">City fairs, melas and cultural vibes</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-3">
-                    <Music2 className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Concerts</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">Live music, indie gigs and more</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-3">
-                    <PartyPopper className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Parties</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">DJ nights and club events</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-3">
-                    <Mic2 className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Comedy</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">Stand-up and open mics</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Workshops</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">Learn and build new skills</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-card border border-border/50 hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-3">
-                    <Star className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Other</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">Everything in between</p>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-
-          {/* Featured Cities */}
-          <section aria-labelledby="featured-cities" className="mt-12">
-            <h3 id="featured-cities" className="text-xl font-semibold text-foreground mb-4">
-              Featured Cities
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {['Mumbai','Delhi','Bengaluru','Hyderabad','Chennai','Kolkata','Pune','Goa'].map((city) => (
-                <Button key={city} variant="secondary" size="sm" className="hover-scale">
-                  <MapPin className="w-4 h-4 mr-1" /> {city}
-                </Button>
-              ))}
-            </div>
-          </section>
         </div>
-      </div>
+      </section>
 
+      {/* Features Section */}
+      <FeaturesSection />
+
+      {/* Popular Categories */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-4">Popular Categories</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Explore events by category and find exactly what you're looking for
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-card rounded-xl p-8 transition-all duration-300 hover:-translate-y-1 border border-border/50 hover:shadow-card-hover group">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                <Sparkles className="text-primary w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Festivals</h3>
+              <p className="text-muted-foreground">City fairs, melas and cultural celebrations with vibrant atmospheres.</p>
+            </div>
+            <div className="bg-card rounded-xl p-8 transition-all duration-300 hover:-translate-y-1 border border-border/50 hover:shadow-card-hover group">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                <Music2 className="text-primary w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Concerts</h3>
+              <p className="text-muted-foreground">Live music performances, indie gigs and concerts from top artists.</p>
+            </div>
+            <div className="bg-card rounded-xl p-8 transition-all duration-300 hover:-translate-y-1 border border-border/50 hover:shadow-card-hover group">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                <PartyPopper className="text-primary w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Parties</h3>
+              <p className="text-muted-foreground">DJ nights, club events and social gatherings for unforgettable nights.</p>
+            </div>
+            <div className="bg-card rounded-xl p-8 transition-all duration-300 hover:-translate-y-1 border border-border/50 hover:shadow-card-hover group">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                <Mic2 className="text-primary w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Comedy</h3>
+              <p className="text-muted-foreground">Stand-up comedy shows and open mics for endless laughter.</p>
+            </div>
+            <div className="bg-card rounded-xl p-8 transition-all duration-300 hover:-translate-y-1 border border-border/50 hover:shadow-card-hover group">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                <Briefcase className="text-primary w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Workshops</h3>
+              <p className="text-muted-foreground">Learn new skills and build connections through educational events.</p>
+            </div>
+            <div className="bg-card rounded-xl p-8 transition-all duration-300 hover:-translate-y-1 border border-border/50 hover:shadow-card-hover group">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                <Star className="text-primary w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">More</h3>
+              <p className="text-muted-foreground">Art exhibitions, sports events and unique experiences.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Cities */}
+      <section id="featured-cities" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-4">Featured Cities</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Discover amazing events across India's most vibrant cities
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {['Mumbai','Delhi','Bengaluru','Hyderabad','Chennai','Kolkata','Pune','Goa'].map((city) => (
+              <Button 
+                key={city} 
+                variant="outline" 
+                size="lg"
+                className="h-auto p-6 flex flex-col items-center gap-2 hover:bg-accent hover:text-accent-foreground border border-border/50 hover:border-primary/50 transition-all duration-200"
+              >
+                <MapPin className="w-6 h-6 text-primary" />
+                <span className="font-medium">{city}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <StatsSection />
+
+      {/* Event Results */}
       {showEvents && (
-        <div id="events-section" className="py-16 px-6 bg-muted/30">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <section id="events-section" className="py-20 bg-muted/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
                 Live Event Results
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                 {filteredEvents.length > 0 
                   ? `Found ${filteredEvents.length} events` 
                   : 'Search for events in your city to see results'
@@ -302,11 +290,11 @@ const Index = () => {
                 ))}
               </div>
             ) : (
-              <div className="space-y-10">
+              <div className="space-y-12">
                 {groupsOrder.map((group) => (
                   groupedEvents[group] && groupedEvents[group].length > 0 ? (
                     <div key={group}>
-                      <h3 className="text-2xl font-semibold text-foreground mb-4 capitalize">
+                      <h3 className="text-2xl font-semibold text-foreground mb-6 capitalize">
                         {group} Events
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -324,8 +312,17 @@ const Index = () => {
               </div>
             )}
           </div>
-        </div>
+        </section>
       )}
+
+      {/* Testimonials */}
+      <TestimonialsSection />
+
+      {/* Call to Action */}
+      <CallToActionSection onGetStarted={handleGetStarted} />
+
+      {/* Footer */}
+      <Footer />
 
       {/* Event Modal */}
       <EventModal

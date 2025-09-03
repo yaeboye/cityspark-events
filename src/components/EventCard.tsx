@@ -55,9 +55,9 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
   };
 
   return (
-    <div className="group bg-gradient-card rounded-xl p-6 shadow-card hover:shadow-card-hover border border-border/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in">
+    <div className="group bg-card rounded-xl p-6 shadow-card hover:shadow-card-hover border border-border/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in">
       {/* Event Image Placeholder */}
-      <div className="w-full h-48 bg-gradient-sunset rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+      <div className="w-full h-48 bg-gradient-primary rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative z-10 text-white text-center">
           <Calendar className="w-12 h-12 mx-auto mb-2 opacity-80" />

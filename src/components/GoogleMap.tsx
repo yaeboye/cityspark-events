@@ -66,14 +66,26 @@ export const GoogleMap = ({
   }, [latitude, longitude, venue, address]);
 
   const openInMaps = () => {
-    const destination = `${latitude},${longitude}`;
-    const googleMapsUrl = `https://maps.google.com/maps?q=${destination}`;
+    // Use venue and address for better search results
+    let searchQuery = '';
+    if (venue && address) {
+      searchQuery = `${venue}, ${address}`;
+    } else if (venue) {
+      searchQuery = venue;
+    } else if (address) {
+      searchQuery = address;
+    } else {
+      searchQuery = `${latitude},${longitude}`;
+    }
+    
+    const encodedQuery = encodeURIComponent(searchQuery);
+    const googleMapsUrl = `https://maps.google.com/maps?q=${encodedQuery}`;
     
     try {
       window.open(googleMapsUrl, '_blank');
       toast({
         title: "Opening Maps",
-        description: "Opening location in Google Maps",
+        description: `Opening "${searchQuery}" in Google Maps`,
       });
     } catch (error) {
       toast({

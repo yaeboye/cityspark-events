@@ -229,14 +229,28 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                   variant="outline"
                   className="flex-1"
                   onClick={() => {
-                    if (event.latitude && event.longitude) {
-                      const destination = `${event.latitude},${event.longitude}`;
-                      const googleMapsUrl = `https://maps.google.com/maps?q=${destination}`;
+                    // Use venue and address for better search results
+                    let searchQuery = '';
+                    if (event.venue && (event.address || event.city)) {
+                      searchQuery = `${event.venue}, ${event.address || event.city}`;
+                    } else if (event.venue) {
+                      searchQuery = event.venue;
+                    } else if (event.address) {
+                      searchQuery = event.address;
+                    } else if (event.city) {
+                      searchQuery = event.city;
+                    } else if (event.latitude && event.longitude) {
+                      searchQuery = `${event.latitude},${event.longitude}`;
+                    }
+                    
+                    if (searchQuery) {
+                      const encodedQuery = encodeURIComponent(searchQuery);
+                      const googleMapsUrl = `https://maps.google.com/maps?q=${encodedQuery}`;
                       try {
                         window.open(googleMapsUrl, '_blank');
                         toast({
                           title: "Opening Maps",
-                          description: "Opening location in Google Maps",
+                          description: `Opening "${searchQuery}" in Google Maps`,
                         });
                       } catch (error) {
                         toast({
@@ -247,7 +261,7 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                     } else {
                       toast({
                         title: "Location not available",
-                        description: "No coordinates available for this event",
+                        description: "No location information available for this event",
                       });
                     }
                   }}

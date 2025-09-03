@@ -67,14 +67,20 @@ export const GoogleMap = ({
 
   const openInMaps = () => {
     const destination = `${latitude},${longitude}`;
-    const urls = [
-      `https://maps.google.com/maps?q=${destination}`,
-      `https://maps.apple.com/?q=${destination}`,
-      `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=15`
-    ];
+    const googleMapsUrl = `https://maps.google.com/maps?q=${destination}`;
     
-    // Try to open Google Maps, fallback to others if needed
-    window.open(urls[0], '_blank');
+    try {
+      window.open(googleMapsUrl, '_blank');
+      toast({
+        title: "Opening Maps",
+        description: "Opening location in Google Maps",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not open maps. Please check your browser settings.",
+      });
+    }
   };
 
   return (

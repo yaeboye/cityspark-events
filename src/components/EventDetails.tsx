@@ -232,7 +232,23 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                     if (event.latitude && event.longitude) {
                       const destination = `${event.latitude},${event.longitude}`;
                       const googleMapsUrl = `https://maps.google.com/maps?q=${destination}`;
-                      window.open(googleMapsUrl, '_blank');
+                      try {
+                        window.open(googleMapsUrl, '_blank');
+                        toast({
+                          title: "Opening Maps",
+                          description: "Opening location in Google Maps",
+                        });
+                      } catch (error) {
+                        toast({
+                          title: "Error",
+                          description: "Could not open maps. Please check your browser settings.",
+                        });
+                      }
+                    } else {
+                      toast({
+                        title: "Location not available",
+                        description: "No coordinates available for this event",
+                      });
                     }
                   }}
                 >

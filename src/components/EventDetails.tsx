@@ -229,18 +229,11 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                   variant="outline"
                   className="flex-1"
                   onClick={() => {
-                    const coordinates = `${event.latitude || ''}, ${event.longitude || ''}`;
-                    navigator.clipboard.writeText(coordinates).then(() => {
-                      toast({
-                        title: "Coordinates copied",
-                        description: "Location coordinates copied to clipboard. Use these in your preferred maps app.",
-                      });
-                    }).catch(() => {
-                      toast({
-                        title: "Location info",
-                        description: `Coordinates: ${coordinates}`,
-                      });
-                    });
+                    if (event.latitude && event.longitude) {
+                      const destination = `${event.latitude},${event.longitude}`;
+                      const googleMapsUrl = `https://maps.google.com/maps?q=${destination}`;
+                      window.open(googleMapsUrl, '_blank');
+                    }
                   }}
                 >
                   <MapPin className="w-5 h-5 mr-2" />

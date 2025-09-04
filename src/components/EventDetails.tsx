@@ -213,10 +213,36 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4">
-                {event.is_paid && onBookTicket && (
+                {event.ticket_url && (
                   <Button 
                     size="lg"
                     className="flex-1 bg-gradient-primary text-primary-foreground hover:shadow-primary"
+                    onClick={() => {
+                      try {
+                        window.open(event.ticket_url, '_blank');
+                        toast({
+                          title: "Opening Event Page",
+                          description: "Redirecting to the official event page",
+                        });
+                      } catch (error) {
+                        toast({
+                          title: "Error",
+                          description: "Could not open event page. Please check your browser settings.",
+                          variant: "destructive"
+                        });
+                      }
+                    }}
+                  >
+                    <Ticket className="w-5 h-5 mr-2" />
+                    View Event Details
+                  </Button>
+                )}
+                
+                {event.is_paid && onBookTicket && (
+                  <Button 
+                    size="lg"
+                    variant="outline"
+                    className="flex-1"
                     onClick={() => onBookTicket(event)}
                   >
                     <Ticket className="w-5 h-5 mr-2" />

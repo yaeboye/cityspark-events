@@ -56,12 +56,27 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
 
   return (
     <div className="group bg-card rounded-xl p-6 shadow-card hover:shadow-card-hover border border-border/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in">
-      {/* Event Image Placeholder */}
-      <div className="w-full h-48 bg-gradient-primary rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 text-white text-center">
-          <Calendar className="w-12 h-12 mx-auto mb-2 opacity-80" />
-          <p className="text-sm font-medium">{event.category}</p>
+      {/* Event Image */}
+      <div className="w-full h-48 rounded-lg mb-4 relative overflow-hidden">
+        {event.image ? (
+          <img 
+            src={event.image} 
+            alt={event.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to gradient if image fails to load
+              e.currentTarget.style.display = 'none';
+              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+              if (fallback) fallback.style.display = 'flex';
+            }}
+          />
+        ) : null}
+        <div className={`${event.image ? 'hidden' : 'flex'} absolute inset-0 bg-gradient-primary items-center justify-center`}>
+          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="relative z-10 text-white text-center">
+            <Calendar className="w-12 h-12 mx-auto mb-2 opacity-80" />
+            <p className="text-sm font-medium">{event.category}</p>
+          </div>
         </div>
       </div>
 

@@ -177,6 +177,57 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Event Results */}
+      {showEvents && (
+        <section id="events-section" className="py-20 bg-muted/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
+                Live Event Results
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                {filteredEvents.length > 0 
+                  ? `Found ${filteredEvents.length} events` 
+                  : 'Search for events in your city to see results'
+                }
+              </p>
+            </div>
+            {searchCategory ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredEvents.map((event) => (
+                  <EventCard 
+                    key={event.id}
+                    event={event}
+                    onViewDetails={handleViewDetails}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-12">
+                {groupsOrder.map((group) => (
+                  groupedEvents[group] && groupedEvents[group].length > 0 ? (
+                    <div key={group}>
+                      <h3 className="text-2xl font-semibold text-foreground mb-6 capitalize">
+                        {group} Events
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {groupedEvents[group].map((event) => (
+                          <EventCard 
+                            key={event.id}
+                            event={event}
+                            onViewDetails={handleViewDetails}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ) : null
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* Features Section */}
       <FeaturesSection />
 
@@ -263,57 +314,6 @@ const Index = () => {
 
       {/* Stats Section */}
       <StatsSection />
-
-      {/* Event Results */}
-      {showEvents && (
-        <section id="events-section" className="py-20 bg-muted/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-foreground mb-4">
-                Live Event Results
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                {filteredEvents.length > 0 
-                  ? `Found ${filteredEvents.length} events` 
-                  : 'Search for events in your city to see results'
-                }
-              </p>
-            </div>
-            {searchCategory ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredEvents.map((event) => (
-                  <EventCard 
-                    key={event.id}
-                    event={event}
-                    onViewDetails={handleViewDetails}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-12">
-                {groupsOrder.map((group) => (
-                  groupedEvents[group] && groupedEvents[group].length > 0 ? (
-                    <div key={group}>
-                      <h3 className="text-2xl font-semibold text-foreground mb-6 capitalize">
-                        {group} Events
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {groupedEvents[group].map((event) => (
-                          <EventCard 
-                            key={event.id}
-                            event={event}
-                            onViewDetails={handleViewDetails}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ) : null
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
 
       {/* Testimonials */}
       <TestimonialsSection />

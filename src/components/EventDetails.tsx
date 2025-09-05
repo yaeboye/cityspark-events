@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, MapPin, Clock, Users, Ticket, Bookmark, Share2, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, Ticket, Bookmark, Share2, ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -234,10 +234,10 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                       }
                     }
                   }}
-                >
-                  <Ticket className="w-5 h-5 mr-2" />
-                  {event.ticket_url ? "View Event Details" : "No Link Available"}
-                </Button>
+                  >
+                    <ExternalLink className="w-5 h-5 mr-2" />
+                    {event.ticket_url ? "View Event Source" : "No Link Available"}
+                  </Button>
                 
                 {event.is_paid && onBookTicket && (
                   <Button 

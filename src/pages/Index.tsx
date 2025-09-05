@@ -26,6 +26,7 @@ interface Event {
   isPaid: boolean;
   price?: string;
   category: string;
+  ticket_url?: string;
 }
 
 interface SearchFilters {
@@ -45,7 +46,8 @@ const transformApiEvent = (apiEvent: any): Event => ({
   venue: apiEvent.venue || 'Venue TBA',
   isPaid: apiEvent.is_paid || false,
   price: apiEvent.price_min ? (apiEvent.price_min / 100).toString() : apiEvent.price,
-  category: apiEvent.category || 'Event'
+  category: apiEvent.category || 'Event',
+  ticket_url: apiEvent.ticket_url
 });
 
 const Index = () => {

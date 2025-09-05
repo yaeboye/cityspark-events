@@ -213,11 +213,12 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4">
-                {event.ticket_url && (
-                  <Button 
-                    size="lg"
-                    className="flex-1 bg-gradient-primary text-primary-foreground hover:shadow-primary"
-                    onClick={() => {
+                <Button 
+                  size="lg"
+                  className="flex-1 bg-gradient-primary text-primary-foreground hover:shadow-primary"
+                  disabled={!event.ticket_url}
+                  onClick={() => {
+                    if (event.ticket_url) {
                       try {
                         window.open(event.ticket_url, '_blank');
                         toast({
@@ -231,12 +232,12 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                           variant: "destructive"
                         });
                       }
-                    }}
-                  >
-                    <Ticket className="w-5 h-5 mr-2" />
-                    View Event Details
-                  </Button>
-                )}
+                    }
+                  }}
+                >
+                  <Ticket className="w-5 h-5 mr-2" />
+                  {event.ticket_url ? "View Event Details" : "No Link Available"}
+                </Button>
                 
                 {event.is_paid && onBookTicket && (
                   <Button 

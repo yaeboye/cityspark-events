@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           address: string | null
           approved: boolean | null
+          approved_by: string | null
           category: string
           city: string
           created_at: string
@@ -41,6 +42,7 @@ export type Database = {
         Insert: {
           address?: string | null
           approved?: boolean | null
+          approved_by?: string | null
           category?: string
           city: string
           created_at?: string
@@ -64,6 +66,7 @@ export type Database = {
         Update: {
           address?: string | null
           approved?: boolean | null
+          approved_by?: string | null
           category?: string
           city?: string
           created_at?: string
@@ -85,6 +88,59 @@ export type Database = {
           venue?: string | null
         }
         Relationships: []
+      }
+      tickets: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          id: string
+          payment_id: string | null
+          payment_status: string
+          purchased_at: string
+          quantity: number
+          ticket_code: string
+          ticket_type: string
+          total_price: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          payment_id?: string | null
+          payment_status?: string
+          purchased_at?: string
+          quantity?: number
+          ticket_code: string
+          ticket_type?: string
+          total_price: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          payment_id?: string | null
+          payment_status?: string
+          purchased_at?: string
+          quantity?: number
+          ticket_code?: string
+          ticket_type?: string
+          total_price?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_bookmarks: {
         Row: {
@@ -126,7 +182,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_ticket_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { User, LogOut, Bookmark, Menu, X } from "lucide-react";
+import { User, LogOut, Bookmark, Menu, X, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface NavigationHeaderProps {
@@ -60,6 +60,14 @@ export const NavigationHeader = ({ user, onShowAuth }: NavigationHeaderProps) =>
                   className="hover:bg-accent hover:text-accent-foreground"
                 >
                   <Bookmark className="w-4 h-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.location.href = '/admin'}
+                  className="hover:bg-accent hover:text-accent-foreground"
+                >
+                  <Settings className="w-4 h-4" />
                 </Button>
                 <Button 
                   variant="outline" 
@@ -137,6 +145,16 @@ export const NavigationHeader = ({ user, onShowAuth }: NavigationHeaderProps) =>
                       }}
                     >
                       <Bookmark className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        window.location.href = '/admin';
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <Settings className="w-4 h-4" />
                     </Button>
                     <Button 
                       variant="outline" 

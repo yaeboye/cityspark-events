@@ -7,6 +7,7 @@ import { WeatherWidget } from "@/components/WeatherWidget";
 import { GoogleMap } from "@/components/GoogleMap";
 import { useToast } from "@/hooks/use-toast";
 import { useBookmarks } from "@/hooks/useBookmarks";
+import { TicketPurchase } from "./TicketPurchase";
 
 interface Event {
   id: string;
@@ -212,90 +213,84 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-4">
-                <Button 
-                  size="lg"
-                  className="flex-1 bg-gradient-primary text-primary-foreground hover:shadow-primary"
-                  disabled={!event.ticket_url}
-                  onClick={() => {
-                    if (event.ticket_url) {
-                      try {
-                        window.open(event.ticket_url, '_blank');
-                        toast({
-                          title: "Opening Event Page",
-                          description: "Redirecting to the official event page",
-                        });
-                      } catch (error) {
-                        toast({
-                          title: "Error",
-                          description: "Could not open event page. Please check your browser settings.",
-                          variant: "destructive"
-                        });
-                      }
-                    }
-                  }}
-                  >
-                    <ExternalLink className="w-5 h-5 mr-2" />
-                    {event.ticket_url ? "View Event Source" : "No Link Available"}
-                  </Button>
+              <div className="space-y-3 pt-4">
+                {/* Ticket Purchase Component */}
+                <TicketPurchase event={event} />
                 
-                {event.is_paid && onBookTicket && (
+                <div className="flex gap-3">
                   <Button 
                     size="lg"
                     variant="outline"
                     className="flex-1"
-                    onClick={() => onBookTicket(event)}
-                  >
-                    <Ticket className="w-5 h-5 mr-2" />
-                    Book Tickets
-                  </Button>
-                )}
-                
-                <Button 
-                  size="lg"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    // Use venue and address for better search results
-                    let searchQuery = '';
-                    if (event.venue && (event.address || event.city)) {
-                      searchQuery = `${event.venue}, ${event.address || event.city}`;
-                    } else if (event.venue) {
-                      searchQuery = event.venue;
-                    } else if (event.address) {
-                      searchQuery = event.address;
-                    } else if (event.city) {
-                      searchQuery = event.city;
-                    } else if (event.latitude && event.longitude) {
-                      searchQuery = `${event.latitude},${event.longitude}`;
-                    }
-                    
-                    if (searchQuery) {
-                      const encodedQuery = encodeURIComponent(searchQuery);
-                      const googleMapsUrl = `https://maps.google.com/maps?q=${encodedQuery}`;
-                      try {
-                        window.open(googleMapsUrl, '_blank');
+                    disabled={!event.ticket_url}
+                    onClick={() => {
+                      if (event.ticket_url) {
+                        try {
+                          window.open(event.ticket_url, '_blank');
+                          toast({
+                            title: "Opening Event Page",
+                            description: "Redirecting to the official event page",
+                          });
+                        } catch (error) {
+                          toast({
+                            title: "Error",
+                            description: "Could not open event page. Please check your browser settings.",
+                            variant: "destructive"
+                          });
+                        }
+                      }
+                    }}
+                    >
+                      <ExternalLink className="w-5 h-5 mr-2" />
+                      {event.ticket_url ? "View Event Source" : "No Link Available"}
+                    </Button>
+                  
+                  <Button 
+                    size="lg"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => {
+                      // Use venue and address for better search results
+                      let searchQuery = '';
+                      if (event.venue && (event.address || event.city)) {
+                        searchQuery = `${event.venue}, ${event.address || event.city}`;
+                      } else if (event.venue) {
+                        searchQuery = event.venue;
+                      } else if (event.address) {
+                        searchQuery = event.address;
+                      } else if (event.city) {
+                        searchQuery = event.city;
+                      } else if (event.latitude && event.longitude) {
+                        searchQuery = `${event.latitude},${event.longitude}`;
+                      }
+                      
+                      if (searchQuery) {
+                        const encodedQuery = encodeURIComponent(searchQuery);
+                        const googleMapsUrl = `https://maps.google.com/maps?q=${encodedQuery}`;
+                        try {
+                          window.open(googleMapsUrl, '_blank');
+                          toast({
+                            title: "Opening Maps",
+                            description: `Opening "${searchQuery}" in Google Maps`,
+                          });
+                        } catch (error) {
+                          toast({
+                            title: "Error",
+                            description: "Could not open maps. Please check your browser settings.",
+                          });
+                        }
+                      } else {
                         toast({
-                          title: "Opening Maps",
-                          description: `Opening "${searchQuery}" in Google Maps`,
-                        });
-                      } catch (error) {
-                        toast({
-                          title: "Error",
-                          description: "Could not open maps. Please check your browser settings.",
+                          title: "Location not available",
+                          description: "No location information available for this event",
                         });
                       }
-                    } else {
-                      toast({
-                        title: "Location not available",
-                        description: "No location information available for this event",
-                      });
-                    }
-                  }}
-                >
-                  <MapPin className="w-5 h-5 mr-2" />
-                  Get Directions
-                </Button>
+                    }}
+                  >
+                    <MapPin className="w-5 h-5 mr-2" />
+                    Get Directions
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

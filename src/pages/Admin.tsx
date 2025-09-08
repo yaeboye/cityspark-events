@@ -9,6 +9,7 @@ import { Plus, Settings, Ticket, Calendar, Users } from "lucide-react";
 import { AddEventForm } from "@/components/admin/AddEventForm";
 import { EventsList } from "@/components/admin/EventsList";
 import { TicketsList } from "@/components/admin/TicketsList";
+import { CreateTestEvent } from "@/components/admin/CreateTestEvent";
 
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
@@ -205,6 +206,7 @@ const Admin = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                <CreateTestEvent onEventCreated={fetchStats} />
                 <EventsList onStatsUpdate={fetchStats} />
               </CardContent>
             </Card>

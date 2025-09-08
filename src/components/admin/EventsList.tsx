@@ -42,14 +42,26 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
   const fetchEvents = async () => {
     try {
       setIsLoading(true);
+      
+      // Check if user is authenticated first
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("Please log in to access admin features");
+      }
+
       const { data, error } = await supabase
         .from('events')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      
       setEvents(data || []);
     } catch (error: any) {
+      console.error("Fetch events error:", error);
       toast({
         title: "Error fetching events",
         description: error.message,
@@ -62,6 +74,14 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
 
   const handleApprovalToggle = async (eventId: string, currentApproval: boolean) => {
     try {
+      // Check if user is authenticated first
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("Please log in to access admin features");
+      }
+
+      console.log(`Toggling approval for event ${eventId} from ${currentApproval} to ${!currentApproval}`);
+      
       const { error } = await supabase
         .from('events')
         .update({ 
@@ -70,7 +90,10 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
         })
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Update error:", error);
+        throw error;
+      }
 
       toast({
         title: `Event ${!currentApproval ? 'approved' : 'unapproved'}`,
@@ -80,6 +103,7 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
       fetchEvents();
       onStatsUpdate();
     } catch (error: any) {
+      console.error("Approval toggle error:", error);
       toast({
         title: "Error updating event",
         description: error.message,
@@ -92,12 +116,23 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
     if (!confirm("Are you sure you want to delete this event?")) return;
 
     try {
+      // Check if user is authenticated first
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("Please log in to access admin features");
+      }
+
+      console.log(`Deleting event ${eventId}`);
+      
       const { error } = await supabase
         .from('events')
         .delete()
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Delete error:", error);
+        throw error;
+      }
 
       toast({
         title: "Event deleted",
@@ -107,6 +142,7 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
       fetchEvents();
       onStatsUpdate();
     } catch (error: any) {
+      console.error("Delete event error:", error);
       toast({
         title: "Error deleting event",
         description: error.message,

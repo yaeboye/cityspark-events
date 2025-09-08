@@ -79,8 +79,8 @@ export const AddEventForm = ({ onEventAdded }: AddEventFormProps) => {
         ticket_url: data.ticket_url || null,
         image_url: data.image_url || null,
         source: 'admin',
-        approved: true, // Admin-created events are automatically approved
-        approved_by: 'Weekend Walla',
+        approved: false, // Admin-created events need approval
+        approved_by: null,
       };
 
       const { error } = await supabase
@@ -91,7 +91,7 @@ export const AddEventForm = ({ onEventAdded }: AddEventFormProps) => {
 
       toast({
         title: "Event created successfully!",
-        description: "The event has been added and approved by Weekend Walla.",
+        description: "The event has been added and is pending approval.",
       });
 
       form.reset();

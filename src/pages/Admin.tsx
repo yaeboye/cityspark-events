@@ -10,9 +10,11 @@ import { AddEventForm } from "@/components/admin/AddEventForm";
 import { EventsList } from "@/components/admin/EventsList";
 import { TicketsList } from "@/components/admin/TicketsList";
 import { CreateTestEvent } from "@/components/admin/CreateTestEvent";
+import { AdminAccessManager } from "@/components/admin/AdminAccessManager";
 
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
     totalEvents: 0,
@@ -26,22 +28,54 @@ const Admin = () => {
     // Check auth state
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user || null);
-      setIsLoading(false);
+      if (session?.user) {
+        checkAdminStatus(session.user.id);
+      } else {
+        setIsLoading(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
-      setIsLoading(false);
+      if (session?.user) {
+        checkAdminStatus(session.user.id);
+      } else {
+        setIsAdmin(null);
+        setIsLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
+  const checkAdminStatus = async (userId: string) => {
+    try {
+      const { data: userRoles, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error checking admin status:', error);
+        throw error;
+      }
+
+      setIsAdmin(!!userRoles);
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (user) {
+    if (user && isAdmin) {
       fetchStats();
     }
-  }, [user]);
+  }, [user, isAdmin]);
 
   const fetchStats = async () => {
     try {
@@ -111,6 +145,29 @@ const Admin = () => {
     );
   }
 
+  if (isAdmin === false) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">Access Denied</CardTitle>
+            <CardDescription className="text-center">
+              You don't have admin privileges to access this panel.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={() => window.location.href = '/'}
+              className="w-full"
+            >
+              Back to Home
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -139,6 +196,7 @@ const Admin = () => {
 
       {/* Stats Cards */}
       <div className="container mx-auto px-4 py-6">
+        <AdminAccessManager />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">

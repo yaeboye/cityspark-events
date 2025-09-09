@@ -221,6 +221,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      make_user_admin: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

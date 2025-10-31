@@ -86,29 +86,52 @@ const Index = () => {
     setSearchCategory(filters.category || "");
     if (filters.city) {
       try {
-        const { data, error } = await supabase.functions.invoke('fetch-events', {
+        // Fetch admin-created events from database
+        const { data: adminEvents, error: adminError } = await supabase
+          .from('events')
+          .select('*')
+          .eq('approved', true)
+          .ilike('city', filters.city)
+          .gte('start_date', new Date().toISOString());
+        
+        if (adminError) {
+          console.error('Admin events fetch error:', adminError);
+        }
+
+        // Fetch API events from edge function
+        const { data: apiData, error: apiError } = await supabase.functions.invoke('fetch-events', {
           body: { city: filters.city, category: filters.category, date: filters.date }
         });
         
-        if (data?.success && data.events) {
-          const transformedEvents = data.events.map(transformApiEvent);
-          setFilteredEvents(transformedEvents);
-          
-          if (transformedEvents.length === 0 && data.message) {
-            // Handle case where no events found for specific date
-            toast({ 
-              title: "No Events Found", 
-              description: data.message,
-              variant: "default"
-            });
-          } else {
-            toast({ 
-              title: "Success!", 
-              description: `Found ${transformedEvents.length} events in ${filters.city}` 
-            });
-          }
+        let allEvents: Event[] = [];
+        
+        // Add admin events (they're already in the correct format)
+        if (adminEvents && adminEvents.length > 0) {
+          const transformedAdminEvents = adminEvents.map(transformApiEvent);
+          allEvents = [...transformedAdminEvents];
+        }
+        
+        // Add API events
+        if (apiData?.success && apiData.events) {
+          const transformedApiEvents = apiData.events.map(transformApiEvent);
+          allEvents = [...allEvents, ...transformedApiEvents];
+        }
+        
+        setFilteredEvents(allEvents);
+        
+        if (allEvents.length === 0) {
+          toast({ 
+            title: "No Events Found", 
+            description: `No events found in ${filters.city}`,
+            variant: "default"
+          });
         } else {
-          throw new Error(data?.error || 'No events found');
+          const adminCount = adminEvents?.length || 0;
+          const apiCount = apiData?.events?.length || 0;
+          toast({ 
+            title: "Success!", 
+            description: `Found ${allEvents.length} events in ${filters.city} (${adminCount} verified)` 
+          });
         }
       } catch (error) {
         console.error('Search error:', error);

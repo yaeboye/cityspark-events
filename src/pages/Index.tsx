@@ -195,6 +195,10 @@ const Index = () => {
   }
   
   console.log('Grouped events:', groupedEvents);
+  console.log('Grouped events keys:', Object.keys(groupedEvents));
+  Object.keys(groupedEvents).forEach(key => {
+    console.log(`Category "${key}" has ${groupedEvents[key].length} events`);
+  });
   
   const handleLoadMore = () => {
     setDisplayLimit(prev => prev + 10);

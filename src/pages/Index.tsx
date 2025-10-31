@@ -265,10 +265,15 @@ const Index = () => {
               <div className="space-y-12">
                 {groupsOrder.map((group) => {
                   const events = groupedEvents[group];
-                  if (!events || events.length === 0) return null;
+                  console.log(`Rendering group "${group}":`, events?.length || 0, 'events');
+                  if (!events || events.length === 0) {
+                    console.log(`Skipping group "${group}" - no events`);
+                    return null;
+                  }
                   
                   const displayEvents = events.slice(0, displayLimit);
                   const hasMore = events.length > displayLimit;
+                  console.log(`Displaying ${displayEvents.length} events from "${group}", hasMore:`, hasMore);
                   
                   return (
                     <div key={group}>

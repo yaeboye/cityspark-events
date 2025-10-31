@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Star, Ticket, Bookmark } from "lucide-react";
+import { Calendar, MapPin, Star, Ticket, Bookmark, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EventWeatherCard } from "@/components/EventWeatherCard";
@@ -17,6 +17,7 @@ interface Event {
   category: string;
   latitude?: number;
   longitude?: number;
+  verified?: boolean;
 }
 
 interface EventCardProps {
@@ -59,9 +60,17 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
       {/* Event Details */}
       <div className="space-y-3">
         <div className="flex items-start justify-between">
-          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 flex-1 pr-2">
-            {event.name}
-          </h3>
+          <div className="flex-1 pr-2">
+            <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+              {event.name}
+            </h3>
+            {event.verified && (
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <ShieldCheck className="w-4 h-4 text-green-600" />
+                <span className="text-xs font-medium text-green-600">Weekend Walla Verified</span>
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"

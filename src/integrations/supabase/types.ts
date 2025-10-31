@@ -38,6 +38,7 @@ export type Database = {
           ticket_url: string | null
           updated_at: string
           venue: string | null
+          verified: boolean | null
         }
         Insert: {
           address?: string | null
@@ -62,6 +63,7 @@ export type Database = {
           ticket_url?: string | null
           updated_at?: string
           venue?: string | null
+          verified?: boolean | null
         }
         Update: {
           address?: string | null
@@ -86,6 +88,7 @@ export type Database = {
           ticket_url?: string | null
           updated_at?: string
           venue?: string | null
+          verified?: boolean | null
         }
         Relationships: []
       }

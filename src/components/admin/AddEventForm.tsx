@@ -79,8 +79,9 @@ export const AddEventForm = ({ onEventAdded }: AddEventFormProps) => {
         ticket_url: data.ticket_url || null,
         image_url: data.image_url || null,
         source: 'admin',
-        approved: false, // Admin-created events need approval
-        approved_by: null,
+        approved: true, // Admin-created events are auto-approved
+        approved_by: 'Weekend Walla',
+        verified: true, // Admin-created events are verified
       };
 
       const { error } = await supabase

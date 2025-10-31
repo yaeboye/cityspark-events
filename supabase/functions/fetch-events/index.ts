@@ -197,7 +197,8 @@ serve(async (req) => {
         ticket_url: event.link,
         image_url: event.thumbnail,
         source: "api",
-        approved: true,
+        approved: false,
+        verified: false,
       };
     });
 
@@ -257,7 +258,8 @@ serve(async (req) => {
           ticket_url: null,
           image_url: null,
           source: "fallback",
-          approved: true,
+          approved: false,
+          verified: false,
         },
         {
           external_id: `fallback_${city}_2`,
@@ -277,7 +279,8 @@ serve(async (req) => {
           ticket_url: null,
           image_url: null,
           source: "fallback",
-          approved: true,
+          approved: false,
+          verified: false,
         }
       ];
     }
@@ -301,7 +304,8 @@ serve(async (req) => {
       ticket_url: event.ticket_url,
       image_url: event.image_url,
       source: event.source,
-      approved: event.approved
+      approved: event.approved,
+      verified: event.verified || false
     }));
 
     // Use upsert to avoid duplicates and get the stored events with UUIDs

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { Eye, Edit, Trash2, MapPin, Calendar, DollarSign } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Eye, Edit, Trash2, MapPin, Calendar, DollarSign, Filter } from "lucide-react";
 import { format } from "date-fns";
 
 interface Event {
@@ -33,11 +34,13 @@ interface EventsListProps {
 export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filterSource, setFilterSource] = useState<string>("all");
+  const [filterApproval, setFilterApproval] = useState<string>("all");
   const { toast } = useToast();
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [filterSource, filterApproval]);
 
   const fetchEvents = async () => {
     try {
@@ -49,10 +52,24 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
         throw new Error("Please log in to access admin features");
       }
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('events')
         .select('*')
         .order('created_at', { ascending: false });
+
+      // Apply source filter
+      if (filterSource !== "all") {
+        query = query.eq('source', filterSource);
+      }
+
+      // Apply approval filter
+      if (filterApproval === "approved") {
+        query = query.eq('approved', true);
+      } else if (filterApproval === "pending") {
+        query = query.eq('approved', false);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Supabase error:", error);
@@ -177,6 +194,41 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
 
   return (
     <div className="space-y-4">
+      {/* Filter Controls */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-muted/50 p-4 rounded-lg">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Filters:</span>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Select value={filterSource} onValueChange={setFilterSource}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Source" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Sources</SelectItem>
+              <SelectItem value="admin">Admin Created</SelectItem>
+              <SelectItem value="api">API Events</SelectItem>
+              <SelectItem value="fallback">Fallback</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select value={filterApproval} onValueChange={setFilterApproval}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Approval Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Showing {events.length} event{events.length !== 1 ? 's' : ''}
+        </div>
+      </div>
+      
       <div className="rounded-md border">
         <Table>
           <TableHeader>

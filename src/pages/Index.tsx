@@ -86,11 +86,12 @@ const Index = () => {
     setSearchCategory(filters.category || "");
     if (filters.city) {
       try {
-        // Fetch admin-created events from database
+        // Fetch admin-created events from database (only approved ones)
         const { data: adminEvents, error: adminError } = await supabase
           .from('events')
           .select('*')
           .eq('approved', true)
+          .eq('verified', true)
           .ilike('city', filters.city)
           .gte('start_date', new Date().toISOString());
         

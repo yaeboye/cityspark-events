@@ -120,6 +120,11 @@ const Index = () => {
           allEvents = [...allEvents, ...transformedApiEvents];
         }
         
+        console.log('Admin events count:', adminEvents?.length || 0);
+        console.log('API events count:', apiData?.events?.length || 0);
+        console.log('Total events:', allEvents.length);
+        console.log('All events:', allEvents);
+        
         setFilteredEvents(allEvents);
         
         if (allEvents.length === 0) {
@@ -172,6 +177,10 @@ const Index = () => {
   const verifiedEvents = filteredEvents.filter(e => e.verified);
   const nonVerifiedEvents = filteredEvents.filter(e => !e.verified);
   
+  console.log('Filtered events total:', filteredEvents.length);
+  console.log('Verified events:', verifiedEvents.length);
+  console.log('Non-verified events:', nonVerifiedEvents.length);
+  
   // Group events: verified first, then others by category
   const groupedEvents = nonVerifiedEvents
     .reduce((acc: Record<string, Event[]>, ev) => {
@@ -184,6 +193,8 @@ const Index = () => {
   if (verifiedEvents.length > 0) {
     groupedEvents['verified'] = verifiedEvents;
   }
+  
+  console.log('Grouped events:', groupedEvents);
   
   const handleLoadMore = () => {
     setDisplayLimit(prev => prev + 10);

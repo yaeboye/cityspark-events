@@ -62,6 +62,11 @@ export const AdminAccessManager = () => {
         throw new Error("Please log in first");
       }
 
+      // Only allow satvikj570@gmail.com to grant themselves admin access
+      if (user.email !== 'satvikj570@gmail.com') {
+        throw new Error("Only the site owner can use this feature. Please contact the administrator.");
+      }
+
       // Call the function to make user admin
       const { error } = await supabase.rpc('make_user_admin', {
         _user_id: user.id

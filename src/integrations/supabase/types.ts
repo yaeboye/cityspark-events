@@ -206,10 +206,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_ticket_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      generate_ticket_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -217,14 +214,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      make_user_admin: {
-        Args: { _user_id: string }
-        Returns: undefined
-      }
+      is_admin: { Args: never; Returns: boolean }
+      make_user_admin: { Args: { _user_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

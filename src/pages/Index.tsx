@@ -60,6 +60,7 @@ const Index = () => {
   const [user, setUser] = useState<any>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [searchCategory, setSearchCategory] = useState<string>("");
+  const [displayLimit, setDisplayLimit] = useState(10);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -84,6 +85,7 @@ const Index = () => {
 
   const handleSearch = async (filters: SearchFilters) => {
     setSearchCategory(filters.category || "");
+    setDisplayLimit(10); // Reset pagination on new search
     if (filters.city) {
       try {
         // Fetch admin-created events from database (only approved ones)
@@ -164,22 +166,28 @@ const Index = () => {
     return 'other';
   };
 
-  const groupsOrder: Array<'festival'|'concert'|'party'|'comedy'|'workshop'|'other'> = ['festival','concert','party','comedy','workshop','other'];
+  const groupsOrder: Array<'verified'|'festival'|'concert'|'party'|'comedy'|'workshop'|'other'> = ['verified','festival','concert','party','comedy','workshop','other'];
   
-  // Sort events: verified (admin-created) first, then API events
-  const sortedEvents = [...filteredEvents].sort((a, b) => {
-    if (a.verified && !b.verified) return -1;
-    if (!a.verified && b.verified) return 1;
-    return 0;
-  });
+  // Separate verified and non-verified events
+  const verifiedEvents = filteredEvents.filter(e => e.verified);
+  const nonVerifiedEvents = filteredEvents.filter(e => !e.verified);
   
-  const groupedEvents = sortedEvents
-    .slice(0, 20)
+  // Group events: verified first, then others by category
+  const groupedEvents = nonVerifiedEvents
     .reduce((acc: Record<string, Event[]>, ev) => {
       const key = deriveCategory(ev);
       (acc[key] ||= []).push(ev);
       return acc;
     }, {} as Record<string, Event[]>);
+  
+  // Add verified events as first category
+  if (verifiedEvents.length > 0) {
+    groupedEvents['verified'] = verifiedEvents;
+  }
+  
+  const handleLoadMore = () => {
+    setDisplayLimit(prev => prev + 10);
+  };
 
 
   if (showAuth) {
@@ -240,14 +248,27 @@ const Index = () => {
               </div>
             ) : (
               <div className="space-y-12">
-                {groupsOrder.map((group) => (
-                  groupedEvents[group] && groupedEvents[group].length > 0 ? (
+                {groupsOrder.map((group) => {
+                  const events = groupedEvents[group];
+                  if (!events || events.length === 0) return null;
+                  
+                  const displayEvents = events.slice(0, displayLimit);
+                  const hasMore = events.length > displayLimit;
+                  
+                  return (
                     <div key={group}>
-                      <h3 className="text-2xl font-semibold text-foreground mb-6 capitalize">
-                        {group} Events
+                      <h3 className="text-2xl font-semibold text-foreground mb-6 capitalize flex items-center gap-2">
+                        {group === 'verified' ? (
+                          <>
+                            <span className="text-green-600">✓</span>
+                            Weekend Walla Verified Events
+                          </>
+                        ) : (
+                          `${group} Events`
+                        )}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {groupedEvents[group].map((event) => (
+                        {displayEvents.map((event) => (
                           <EventCard 
                             key={event.id}
                             event={event}
@@ -255,9 +276,20 @@ const Index = () => {
                           />
                         ))}
                       </div>
+                      {hasMore && (
+                        <div className="mt-6 text-center">
+                          <Button 
+                            onClick={handleLoadMore}
+                            variant="outline"
+                            size="lg"
+                          >
+                            See More {group === 'verified' ? 'Verified' : group.charAt(0).toUpperCase() + group.slice(1)} Events
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                  ) : null
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

@@ -141,7 +141,15 @@ const Index = () => {
   };
 
   const groupsOrder: Array<'festival'|'concert'|'party'|'comedy'|'workshop'|'other'> = ['festival','concert','party','comedy','workshop','other'];
-  const groupedEvents = filteredEvents
+  
+  // Sort events: verified (admin-created) first, then API events
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    if (a.verified && !b.verified) return -1;
+    if (!a.verified && b.verified) return 1;
+    return 0;
+  });
+  
+  const groupedEvents = sortedEvents
     .slice(0, 20)
     .reduce((acc: Record<string, Event[]>, ev) => {
       const key = deriveCategory(ev);

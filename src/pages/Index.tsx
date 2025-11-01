@@ -61,6 +61,8 @@ const Index = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [searchCategory, setSearchCategory] = useState<string>("");
   const [displayLimits, setDisplayLimits] = useState<Record<string, number>>({});
+  const [categoryOffsets, setCategoryOffsets] = useState<Record<string, number>>({});
+  const [currentCity, setCurrentCity] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,6 +88,8 @@ const Index = () => {
   const handleSearch = async (filters: SearchFilters) => {
     setSearchCategory(filters.category || "");
     setDisplayLimits({}); // Reset pagination on new search
+    setCategoryOffsets({}); // Reset offsets on new search
+    setCurrentCity(filters.city); // Store current city for load more
     if (filters.city) {
       try {
         // Fetch admin-created events from database (only approved ones)
@@ -200,11 +204,53 @@ const Index = () => {
     console.log(`Category "${key}" has ${groupedEvents[key].length} events`);
   });
   
-  const handleLoadMore = (category: string) => {
-    setDisplayLimits(prev => ({
-      ...prev,
-      [category]: (prev[category] || 10) + 10
-    }));
+  const handleLoadMore = async (category: string) => {
+    if (!currentCity) return;
+    
+    try {
+      const currentOffset = categoryOffsets[category] || 0;
+      const newOffset = currentOffset + 10;
+      
+      // Fetch more events from API
+      const { data: apiData, error: apiError } = await supabase.functions.invoke('fetch-events', {
+        body: { 
+          city: currentCity, 
+          category: category === 'verified' ? '' : category,
+          offset: newOffset 
+        }
+      });
+      
+      if (apiData?.success && apiData.events && apiData.events.length > 0) {
+        const transformedApiEvents = apiData.events.map(transformApiEvent);
+        
+        // Append new events to existing ones
+        setFilteredEvents(prev => [...prev, ...transformedApiEvents]);
+        
+        // Update offset for this category
+        setCategoryOffsets(prev => ({
+          ...prev,
+          [category]: newOffset
+        }));
+        
+        toast({ 
+          title: "Success!", 
+          description: `Loaded ${transformedApiEvents.length} more events` 
+        });
+      } else {
+        toast({ 
+          title: "No More Events", 
+          description: "No additional events found",
+          variant: "default"
+        });
+      }
+    } catch (error) {
+      console.error('Load more error:', error);
+      toast({ 
+        title: "Error", 
+        description: "Could not load more events",
+        variant: "destructive" 
+      });
+    }
   };
 
 
@@ -275,9 +321,8 @@ const Index = () => {
                   }
                   
                   const limit = displayLimits[group] || 10;
-                  const displayEvents = events.slice(0, limit);
-                  const hasMore = events.length > limit;
-                  console.log(`Displaying ${displayEvents.length} events from "${group}", hasMore:`, hasMore);
+                  const displayEvents = events;
+                  console.log(`Displaying ${displayEvents.length} events from "${group}"`);
                   
                   return (
                     <div key={group}>
@@ -300,17 +345,15 @@ const Index = () => {
                           />
                         ))}
                       </div>
-                      {hasMore && (
-                        <div className="mt-6 text-center">
-                          <Button 
-                            onClick={() => handleLoadMore(group)}
-                            variant="outline"
-                            size="lg"
-                          >
-                            See More {group === 'verified' ? 'Verified' : group.charAt(0).toUpperCase() + group.slice(1)} Events
-                          </Button>
-                        </div>
-                      )}
+                      <div className="mt-6 text-center">
+                        <Button 
+                          onClick={() => handleLoadMore(group)}
+                          variant="outline"
+                          size="lg"
+                        >
+                          See More {group === 'verified' ? 'Verified' : group.charAt(0).toUpperCase() + group.slice(1)} Events
+                        </Button>
+                      </div>
                     </div>
                   );
                 })}

@@ -10,6 +10,7 @@ interface EventSearchParams {
   city: string;
   category?: string;
   date?: string;
+  offset?: number;
 }
 
 // Helper function to get approximate city coordinates
@@ -80,9 +81,9 @@ serve(async (req) => {
   const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    const { city, category, date }: EventSearchParams = await req.json();
+    const { city, category, date, offset = 0 }: EventSearchParams = await req.json();
     
-    console.log(`Fetching events for city: ${city}, category: ${category}, date: ${date}`);
+    console.log(`Fetching events for city: ${city}, category: ${category}, date: ${date}, offset: ${offset}`);
     
     if (!city) {
       throw new Error("City parameter is required");
@@ -113,6 +114,11 @@ serve(async (req) => {
 
     if (!category) {
       params.append("num", "20");
+    }
+
+    // Add pagination support
+    if (offset > 0) {
+      params.append("start", offset.toString());
     }
 
     console.log(`SerpAPI URL: https://serpapi.com/search?${params}`);

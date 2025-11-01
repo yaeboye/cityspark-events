@@ -60,7 +60,7 @@ const Index = () => {
   const [user, setUser] = useState<any>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [searchCategory, setSearchCategory] = useState<string>("");
-  const [displayLimit, setDisplayLimit] = useState(10);
+  const [displayLimits, setDisplayLimits] = useState<Record<string, number>>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const Index = () => {
 
   const handleSearch = async (filters: SearchFilters) => {
     setSearchCategory(filters.category || "");
-    setDisplayLimit(10); // Reset pagination on new search
+    setDisplayLimits({}); // Reset pagination on new search
     if (filters.city) {
       try {
         // Fetch admin-created events from database (only approved ones)
@@ -200,8 +200,11 @@ const Index = () => {
     console.log(`Category "${key}" has ${groupedEvents[key].length} events`);
   });
   
-  const handleLoadMore = () => {
-    setDisplayLimit(prev => prev + 10);
+  const handleLoadMore = (category: string) => {
+    setDisplayLimits(prev => ({
+      ...prev,
+      [category]: (prev[category] || 10) + 10
+    }));
   };
 
 
@@ -271,8 +274,9 @@ const Index = () => {
                     return null;
                   }
                   
-                  const displayEvents = events.slice(0, displayLimit);
-                  const hasMore = events.length > displayLimit;
+                  const limit = displayLimits[group] || 10;
+                  const displayEvents = events.slice(0, limit);
+                  const hasMore = events.length > limit;
                   console.log(`Displaying ${displayEvents.length} events from "${group}", hasMore:`, hasMore);
                   
                   return (
@@ -298,7 +302,7 @@ const Index = () => {
                       </div>
                       <div className="mt-6 text-center">
                         <Button 
-                          onClick={handleLoadMore}
+                          onClick={() => handleLoadMore(group)}
                           variant="outline"
                           size="lg"
                         >

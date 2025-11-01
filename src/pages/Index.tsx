@@ -300,15 +300,17 @@ const Index = () => {
                           />
                         ))}
                       </div>
-                      <div className="mt-6 text-center">
-                        <Button 
-                          onClick={() => handleLoadMore(group)}
-                          variant="outline"
-                          size="lg"
-                        >
-                          See More {group === 'verified' ? 'Verified' : group.charAt(0).toUpperCase() + group.slice(1)} Events
-                        </Button>
-                      </div>
+                      {hasMore && (
+                        <div className="mt-6 text-center">
+                          <Button 
+                            onClick={() => handleLoadMore(group)}
+                            variant="outline"
+                            size="lg"
+                          >
+                            See More {group === 'verified' ? 'Verified' : group.charAt(0).toUpperCase() + group.slice(1)} Events
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

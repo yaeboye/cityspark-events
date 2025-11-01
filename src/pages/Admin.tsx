@@ -11,6 +11,7 @@ import { EventsList } from "@/components/admin/EventsList";
 import { TicketsList } from "@/components/admin/TicketsList";
 import { CreateTestEvent } from "@/components/admin/CreateTestEvent";
 import { AdminAccessManager } from "@/components/admin/AdminAccessManager";
+import { TestimonialsList } from "@/components/admin/TestimonialsList";
 
 const Admin = () => {
   const [user, setUser] = useState<any>(null);
@@ -252,6 +253,7 @@ const Admin = () => {
           <TabsList>
             <TabsTrigger value="events">Events Management</TabsTrigger>
             <TabsTrigger value="tickets">Tickets & Sales</TabsTrigger>
+            <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
             <TabsTrigger value="add-event">Add New Event</TabsTrigger>
           </TabsList>
 
@@ -280,6 +282,20 @@ const Admin = () => {
               </CardHeader>
               <CardContent>
                 <TicketsList />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="testimonials" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Manage Testimonials</CardTitle>
+                <CardDescription>
+                  Approve, reject, or delete user testimonials
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TestimonialsList />
               </CardContent>
             </Card>
           </TabsContent>

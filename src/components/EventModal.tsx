@@ -13,7 +13,7 @@ interface Event {
   category: string;
   latitude?: number;
   longitude?: number;
-  image_url?: string;
+  image?: string;
   ticket_url?: string;
 }
 
@@ -36,8 +36,10 @@ export const EventModal = ({ event, isOpen, onClose, onBookTicket }: EventModalP
     address: event.city,
     price_min: event.price ? parseInt(event.price) * 100 : undefined,
     price_max: event.price ? parseInt(event.price) * 100 : undefined,
-    image_url: event.image_url,
+    image_url: event.image,
     ticket_url: event.ticket_url,
+    latitude: event.latitude,
+    longitude: event.longitude,
   };
 
   return (

@@ -137,13 +137,14 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
             <div className="relative">
               <div 
                 className="w-full h-96 bg-gradient-sunset rounded-xl flex items-center justify-center relative overflow-hidden"
-                style={{
-                  backgroundImage: event.image_url ? `url(${event.image_url})` : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
               >
-                {!event.image_url && (
+                {event.image_url ? (
+                  <img 
+                    src={event.image_url} 
+                    alt={event.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
                   <>
                     <div className="absolute inset-0 bg-black/20"></div>
                     <div className="relative z-10 text-white text-center">

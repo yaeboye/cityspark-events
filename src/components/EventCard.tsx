@@ -56,9 +56,20 @@ export const EventCard = ({ event, onViewDetails, onBookTicket }: EventCardProps
   };
 
   return (
-    <div className="group bg-card rounded-xl p-6 shadow-card hover:shadow-card-hover border border-border/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in">
+    <div className="group bg-card rounded-xl overflow-hidden shadow-card hover:shadow-card-hover border border-border/50 transition-all duration-300 hover:-translate-y-1 animate-fade-in">
+      {/* Event Image */}
+      {event.image && (
+        <div className="w-full h-48 overflow-hidden">
+          <img 
+            src={event.image} 
+            alt={event.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      )}
+      
       {/* Event Details */}
-      <div className="space-y-3">
+      <div className="space-y-3 p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1 pr-2">
             <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">

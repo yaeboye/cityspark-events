@@ -28,6 +28,9 @@ interface Event {
   category: string;
   ticket_url?: string;
   verified?: boolean;
+  image?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 interface SearchFilters {
@@ -49,7 +52,10 @@ const transformApiEvent = (apiEvent: any): Event => ({
   price: apiEvent.price_min ? (apiEvent.price_min / 100).toString() : apiEvent.price,
   category: apiEvent.category || 'Event',
   ticket_url: apiEvent.ticket_url,
-  verified: apiEvent.verified || false
+  verified: apiEvent.verified || false,
+  image: apiEvent.image_url,
+  latitude: apiEvent.latitude,
+  longitude: apiEvent.longitude
 });
 
 const Index = () => {

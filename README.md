@@ -33,4 +33,4 @@ A simple app to find weekend events across Indian cities. Built with Vite, React
 
 ## Notes
 - API keys (e.g., SerpAPI) should be configured in Supabase environment for the edge function.
-- This repo contains no references to any AI tools.
+

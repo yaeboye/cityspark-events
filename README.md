@@ -7,11 +7,22 @@ A simple app to find weekend events across Indian cities. Built with Vite, React
 1. Install dependencies
    npm install
 
-2. Start the dev server
+2. Copy the env template and fill in your own Supabase project values
+   cp .env.example .env
+
+3. Start the dev server
    npm run dev
 
-3. Build for production
+4. Build for production
    npm run build
+
+### Environment variables
+
+| Variable | Description |
+| --- | --- |
+| `VITE_SUPABASE_PROJECT_ID` | Supabase project ID |
+| `VITE_SUPABASE_URL` | Supabase project URL (Project Settings > API) |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key (Project Settings > API) |
 
 ## Tech Stack
 - React + TypeScript

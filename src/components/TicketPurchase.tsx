@@ -24,13 +24,21 @@ interface TicketPurchaseProps {
   event: Event;
 }
 
+interface GeneratedTicket {
+  ticket_code: string;
+  quantity: number;
+  ticket_type: string;
+  total_price: number;
+  payment_status: string;
+}
+
 export const TicketPurchase = ({ event }: TicketPurchaseProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [ticketType, setTicketType] = useState("general");
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
-  const [generatedTicket, setGeneratedTicket] = useState<any>(null);
+  const [generatedTicket, setGeneratedTicket] = useState<GeneratedTicket | null>(null);
   const { toast } = useToast();
 
   const ticketPrice = event.price_min || 0;
@@ -90,10 +98,10 @@ export const TicketPurchase = ({ event }: TicketPurchaseProps) => {
         description: "Your e-ticket has been generated. You can download it below.",
       });
 
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Purchase failed",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {

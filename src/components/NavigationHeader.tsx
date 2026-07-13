@@ -1,10 +1,11 @@
 import { useState } from "react";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, Bookmark, Menu, X, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface NavigationHeaderProps {
-  user: any;
+  user: SupabaseUser | null;
   onShowAuth: () => void;
 }
 

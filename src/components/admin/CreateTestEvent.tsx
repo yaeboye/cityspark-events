@@ -50,10 +50,10 @@ export const CreateTestEvent = ({ onEventCreated }: CreateTestEventProps) => {
       });
 
       onEventCreated();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error creating test event",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {

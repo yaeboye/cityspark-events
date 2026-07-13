@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import { AdminAccessManager } from "@/components/admin/AdminAccessManager";
 import { TestimonialsList } from "@/components/admin/TestimonialsList";
 
 const Admin = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({

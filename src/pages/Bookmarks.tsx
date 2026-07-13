@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Bookmark, Trash2 } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
@@ -32,7 +33,7 @@ const Bookmarks = () => {
   const [bookmarkedEvents, setBookmarkedEvents] = useState<BookmarkedEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {

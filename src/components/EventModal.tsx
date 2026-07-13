@@ -46,7 +46,7 @@ export const EventModal = ({ event, isOpen, onClose, onBookTicket }: EventModalP
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
         <EventDetails 
-          event={transformedEvent as any}
+          event={transformedEvent}
           onBack={onClose}
           onBookTicket={onBookTicket ? () => onBookTicket() : undefined}
         />

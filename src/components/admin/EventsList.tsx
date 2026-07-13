@@ -77,11 +77,11 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
       }
       
       setEvents(data || []);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Fetch events error:", error);
       toast({
         title: "Error fetching events",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {
@@ -119,11 +119,11 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
 
       fetchEvents();
       onStatsUpdate();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Approval toggle error:", error);
       toast({
         title: "Error updating event",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     }
@@ -158,11 +158,11 @@ export const EventsList = ({ onStatsUpdate }: EventsListProps) => {
 
       fetchEvents();
       onStatsUpdate();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Delete event error:", error);
       toast({
         title: "Error deleting event",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     }

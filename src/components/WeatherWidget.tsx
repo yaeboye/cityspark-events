@@ -77,7 +77,7 @@ export const WeatherWidget = ({
         } else {
           throw new Error(data.error || 'Failed to fetch weather');
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error('Weather fetch error:', error);
         toast({
           title: "Weather unavailable",

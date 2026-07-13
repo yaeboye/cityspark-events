@@ -40,11 +40,11 @@ export const AdminAccessManager = () => {
       }
 
       setIsAdmin(!!userRoles);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error checking admin status:', error);
       toast({
         title: "Error checking admin status",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
       setIsAdmin(false);
@@ -81,11 +81,11 @@ export const AdminAccessManager = () => {
       
       // Refresh admin status
       checkAdminStatus();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error granting admin access:', error);
       toast({
         title: "Error granting admin access",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {

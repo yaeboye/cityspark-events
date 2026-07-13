@@ -12,6 +12,14 @@ interface WeatherParams {
   date?: string;
 }
 
+interface ForecastItem {
+  dt: number;
+  main: { temp: number; humidity: number; feels_like: number };
+  weather: { description: string; icon: string }[];
+  wind: { speed: number };
+  rain?: { '3h'?: number };
+}
+
 // Helper function to get city coordinates
 function getCityCoordinates(city: string): { lat: number; lng: number } {
   const coordinates: Record<string, { lat: number; lng: number }> = {
@@ -120,7 +128,7 @@ serve(async (req) => {
       const eventDate = new Date(date);
       const eventDateString = eventDate.toISOString().split('T')[0];
       
-      eventDateForecast = forecastData.list.find((item: any) => {
+      eventDateForecast = forecastData.list.find((item: ForecastItem) => {
         const forecastDate = new Date(item.dt * 1000).toISOString().split('T')[0];
         return forecastDate === eventDateString;
       });
@@ -146,7 +154,7 @@ serve(async (req) => {
         feelsLike: Math.round(eventDateForecast.main.feels_like),
         precipitation: eventDateForecast.rain ? eventDateForecast.rain['3h'] || 0 : 0,
       } : null,
-      forecast: forecastData.list.slice(0, 8).map((item: any) => ({
+      forecast: forecastData.list.slice(0, 8).map((item: ForecastItem) => ({
         date: new Date(item.dt * 1000).toISOString(),
         temperature: Math.round(item.main.temp),
         description: item.weather[0].description,

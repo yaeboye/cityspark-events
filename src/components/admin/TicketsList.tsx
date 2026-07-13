@@ -57,10 +57,10 @@ export const TicketsList = () => {
 
       if (error) throw error;
       setTickets(data || []);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error fetching tickets",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {
@@ -83,10 +83,10 @@ export const TicketsList = () => {
       });
 
       fetchTickets();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error updating status",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     }

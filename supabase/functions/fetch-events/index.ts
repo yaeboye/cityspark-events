@@ -13,6 +13,24 @@ interface EventSearchParams {
   offset?: number;
 }
 
+interface SerpApiTicketInfo {
+  price?: string;
+}
+
+interface SerpApiEvent {
+  event_id?: string;
+  title: string;
+  description?: string;
+  snippet?: string;
+  date?: { start_date?: string; end_date?: string };
+  venue?: { name?: string; address?: string };
+  address?: string[];
+  event_location_map?: { link?: string };
+  ticket_info?: SerpApiTicketInfo[];
+  link?: string;
+  thumbnail?: string;
+}
+
 // Helper function to get approximate city coordinates
 function getCityCoordinates(city: string): { lat: number; lng: number } {
   const coordinates: Record<string, { lat: number; lng: number }> = {
@@ -135,7 +153,7 @@ serve(async (req) => {
     }
 
     // Transform SerpApi response to our event format
-    let events = (data.events_results || []).map((event: any) => {
+    let events = (data.events_results || []).map((event: SerpApiEvent) => {
       // Fix date parsing - handle cases where API returns wrong year
       let startDate = event.date?.start_date;
       if (startDate) {
@@ -195,11 +213,11 @@ serve(async (req) => {
         latitude: latitude,
         longitude: longitude,
         category: category || "general",
-        is_paid: event.ticket_info?.some((ticket: any) => ticket.price) || false,
+        is_paid: event.ticket_info?.some((ticket: SerpApiTicketInfo) => ticket.price) || false,
         price_min: event.ticket_info?.length > 0 ? 
-          Math.min(...event.ticket_info.map((t: any) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
+          Math.min(...event.ticket_info.map((t: SerpApiTicketInfo) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
         price_max: event.ticket_info?.length > 0 ? 
-          Math.max(...event.ticket_info.map((t: any) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
+          Math.max(...event.ticket_info.map((t: SerpApiTicketInfo) => parseFloat(t.price?.replace(/[^\d.]/g, '')) * 100 || 0)) : null,
         ticket_url: event.link,
         image_url: event.thumbnail,
         source: "api",

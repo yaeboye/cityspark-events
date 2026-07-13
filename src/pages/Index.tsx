@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { HeroSection } from "@/components/HeroSection";
 import { SearchBar } from "@/components/SearchBar";
 import { EventCard } from "@/components/EventCard";
@@ -40,8 +41,28 @@ interface SearchFilters {
   priceType: string;
 }
 
+interface RawApiEvent {
+  id?: string;
+  external_id?: string;
+  name: string;
+  description: string;
+  start_date?: string;
+  date?: string;
+  city: string;
+  venue?: string;
+  is_paid?: boolean;
+  price_min?: number;
+  price?: string;
+  category?: string;
+  ticket_url?: string;
+  verified?: boolean;
+  image_url?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 // Transform API events to our format
-const transformApiEvent = (apiEvent: any): Event => ({
+const transformApiEvent = (apiEvent: RawApiEvent): Event => ({
   id: apiEvent.id || apiEvent.external_id, // Use database UUID if available, fallback to external_id
   name: apiEvent.name,
   description: apiEvent.description,
@@ -63,7 +84,7 @@ const Index = () => {
   const [showEvents, setShowEvents] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showEventModal, setShowEventModal] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [searchCategory, setSearchCategory] = useState<string>("");
   const [displayLimits, setDisplayLimits] = useState<Record<string, number>>({});

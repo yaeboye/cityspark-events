@@ -98,10 +98,10 @@ export const AddEventForm = ({ onEventAdded }: AddEventFormProps) => {
 
       form.reset();
       onEventAdded();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error creating event",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {

@@ -47,10 +47,10 @@ export const AuthForms = ({ onSuccess }: AuthFormsProps) => {
       });
 
       onSuccess();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Login failed",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {
@@ -91,10 +91,10 @@ export const AuthForms = ({ onSuccess }: AuthFormsProps) => {
       });
 
       onSuccess();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Signup failed",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
         variant: "destructive",
       });
     } finally {

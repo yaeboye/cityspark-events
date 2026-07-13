@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, MapPin, Clock, Users, Ticket, Bookmark, Share2, ArrowLeft, ExternalLink } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, Ticket, Bookmark, Share2, ArrowLeft, ExternalLink, CalendarPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { WeatherWidget } from "@/components/WeatherWidget";
 import { GoogleMap } from "@/components/GoogleMap";
 import { useToast } from "@/hooks/use-toast";
 import { useBookmarks } from "@/hooks/useBookmarks";
+import { downloadIcsFile } from "@/lib/ics";
 import { TicketPurchase } from "./TicketPurchase";
 
 interface Event {
@@ -65,6 +66,21 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
   };
 
 
+  const handleAddToCalendar = () => {
+    downloadIcsFile({
+      id: event.id,
+      title: event.name,
+      description: event.description,
+      location: event.venue ? `${event.venue}, ${event.address || event.city}` : event.address || event.city,
+      start: new Date(event.start_date),
+      end: event.end_date ? new Date(event.end_date) : undefined,
+    });
+    toast({
+      title: "Calendar file downloaded",
+      description: "Open it to add this event to your calendar",
+    });
+  };
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -116,6 +132,15 @@ export const EventDetails = ({ event, onBack, onBookTicket }: EventDetailsProps)
                 {isBookmarked(event.id) ? "Bookmarked" : "Bookmark"}
               </Button>
               
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleAddToCalendar}
+              >
+                <CalendarPlus className="w-4 h-4 mr-1" />
+                Add to Calendar
+              </Button>
+
               <Button
                 variant="outline"
                 size="sm"
